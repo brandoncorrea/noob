@@ -1,0 +1,6 @@
+#!/bin/bash
+set -ex
+source bin/datomic.env
+
+cp bin/transactor.properties $DATOMIC_HOME/config/transactor.properties
+$DATOMIC_HOME/bin/transactor -Xmx1g -Xms1g config/transactor.properties
