@@ -1,6 +1,6 @@
 (ns noob.main-spec
   (:require [discljord.events :as discord-events]
-            [noob.events :as events]
+            [noob.events.core :as events]
             [noob.main :as sut]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]

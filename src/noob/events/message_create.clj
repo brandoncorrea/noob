@@ -1,8 +1,8 @@
-(ns noob.message-create
+(ns noob.events.message-create
   (:require [discljord.formatting :as formatting]
             [discljord.messaging :as discord-rest]
             [noob.bot :as bot]
-            [noob.events :as events]))
+            [noob.events.core :as events]))
 
 (def responses ["Hello there" "Good evening" "Good morning" "G'day" "Hi" "Howdy :cowboy:"])
 

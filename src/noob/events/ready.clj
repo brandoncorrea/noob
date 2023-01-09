@@ -1,7 +1,7 @@
-(ns noob.ready
+(ns noob.events.ready
   (:require [discljord.connections :as discord-ws]
-            [noob.events :as events]
-            [noob.bot :as bot]))
+            [noob.bot :as bot]
+            [noob.events.core :as events]))
 
 (defmethod events/handle-event :ready
   [_ _]

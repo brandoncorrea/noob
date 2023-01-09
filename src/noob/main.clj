@@ -2,9 +2,9 @@
   (:require [clojure.edn :as edn]
             [discljord.events :as discord-events]
             [noob.bot :as bot]
-            [noob.events :as events]
-            [noob.message-create]
-            [noob.ready]))
+            [noob.events.core :as events]
+            [noob.events.message-create]
+            [noob.events.ready]))
 
 (defn -main [& _]
   (try

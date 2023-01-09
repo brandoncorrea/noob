@@ -1,8 +1,8 @@
-(ns noob.message-create-spec
+(ns noob.events.message-create-spec
   (:require [discljord.formatting :as formatting]
             [noob.bot :as bot]
-            [noob.events :as events]
-            [noob.message-create :as sut]
+            [noob.events.core :as events]
+            [noob.events.message-create :as sut]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]
             [speclj.stub :as stub]))

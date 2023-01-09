@@ -1,6 +1,6 @@
-(ns noob.ready-spec
+(ns noob.events.ready-spec
   (:require [discljord.connections :as discord-ws]
-            [noob.events :as events]
+            [noob.events.core :as events]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]))
 
