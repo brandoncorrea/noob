@@ -1,5 +1,6 @@
 (ns noob.main-spec
   (:require [discljord.events :as discord-events]
+            [noob.config :as config]
             [noob.events.core :as events]
             [noob.main :as sut]
             [noob.spec-helper :as spec-helper]
@@ -15,10 +16,9 @@
       (it)))
 
   (it "initializes with bot token"
-    (with-redefs [slurp (fn [file] ({"config.edn" "{:token \"TOKEN\"}"} file))]
-      (sut/-main)
-      (let [[init! pump! stop!] @stub/*stubbed-invocations*]
-        (should= [:bot/init! ["TOKEN"]] init!)
-        (should= [:discord/message-pump! [:bot/events events/handle-event]] pump!)
-        (should= [:bot/stop! []] stop!))))
+    (sut/-main)
+    (let [[init! pump! stop!] @stub/*stubbed-invocations*]
+      (should= [:bot/init! [config/token]] init!)
+      (should= [:discord/message-pump! [:bot/events events/handle-event]] pump!)
+      (should= [:bot/stop! []] stop!)))
   )

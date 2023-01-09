@@ -2,6 +2,8 @@
  :paths     ["src" "resources"]
  :mvn/repos {"my.datomic.com" {:url "https://my.datomic.com/repo"}}
  :deps      {
+             cheshire/cheshire                   {:mvn/version "5.11.0"}
+             clj-http/clj-http                   {:mvn/version "3.12.3"}
              com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.376"} ; required for staging/production
              com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.376"}
              com.cleancoders.c3kit/bucket        {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "fc7b04abb5155786357106b9b3f6e2b90ac1e3f3"}
