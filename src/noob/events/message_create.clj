@@ -11,6 +11,5 @@
 
 (defmethod events/handle-event :message-create
   [_ {:keys [channel-id author mentions] :as data}]
-  (prn "data:" data)
   (when (some #{@bot/id} (map :id mentions))
     (discord-rest/create-message! (bot/rest-connection) channel-id :content (random-response author))))
