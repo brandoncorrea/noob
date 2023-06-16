@@ -3,14 +3,13 @@
             [noob.events.core :as events]))
 
 (def dev-commands
-  [
-   ["daily" "Redeem your daily Niblets!"]
-   ])
+  {
+   "daily"  "Redeem your daily Niblets!"
+   "weekly" "Redeem your weekly Niblets!"
+   })
 
 (def global-commands
-  [
-   ;["daily" "Redeem your daily Niblets!"]
-   ])
+  {})
 
 (def slash-name (comp :name :data))
 (defmulti handle-slash slash-name)

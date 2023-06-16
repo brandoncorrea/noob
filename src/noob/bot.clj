@@ -24,4 +24,8 @@
 
 (defn init! [token]
   (reset! state (start! token :guild-messages))
-  (reset! id (:id @(discord-rest/get-current-user! (rest-connection)))))
+  (->> (rest-connection)
+       discord-rest/get-current-user!
+       deref
+       :id
+       (reset! id)))

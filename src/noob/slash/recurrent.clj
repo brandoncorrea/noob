@@ -44,7 +44,7 @@
       (update user :niblets + niblets)
       (assoc user :niblets niblets))))
 
-(defn- reward-niblets! [kind user command request]
+(defn- award-niblets! [kind user command request]
   (let [user    (-> user (or (user/create (user/discord-id request))) (add-niblets kind))
         command (-> command (or (command/create-command kind user)) command/bump-runtime)]
     (db/tx* [user command])
@@ -56,7 +56,7 @@
         time-left (command/millis-to-reset command)]
     (if (some-> time-left pos?)
       (discord-api/reply-interaction! request (not-ready-message kind time-left))
-      (reward-niblets! kind user command request))))
+      (award-niblets! kind user command request))))
 
 (defmethod slash/handle-slash "daily" [request]
   (handle-recurrent :daily request))
