@@ -31,7 +31,8 @@ structure and add your Discord bot's token:
 ### Download
 
     # Download and unzip datomic-pro 1.0.6269
-    unzip datomic-pro-1.0.6269
+    curl https://datomic-pro-downloads.s3.amazonaws.com/1.0.6733/datomic-pro-1.0.6733.zip -O
+    unzip datomic-pro-1.0.6733.zip
 
 ### Start Datomic
 
@@ -48,7 +49,7 @@ structure and add your Discord bot's token:
 
 Make sure datomic is running...
 
-    clj -Mrun
+    clj -Mtest:run
 
 ## Running Tests
 

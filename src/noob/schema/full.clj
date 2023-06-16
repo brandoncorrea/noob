@@ -2,4 +2,10 @@
   (:require [noob.schema.command :as command]
             [noob.schema.user :as user]))
 
-(def full-schema [user/user command/all])
+(def legend
+  {
+   :user    user/user
+   :command command/command
+   })
+
+(def full-schema (vals legend))

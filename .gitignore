@@ -9,5 +9,5 @@
 .hgignore
 .hg/
 config.edn
-datomic-pro-1.0.6527
+datomic-pro-1.0.6733
 .java-version

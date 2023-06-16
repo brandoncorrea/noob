@@ -7,13 +7,13 @@
              com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.472"} ; required for staging/production
              com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.470"}
              com.cleancoders.c3kit/bucket        {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "fc7b04abb5155786357106b9b3f6e2b90ac1e3f3"}
-             com.datomic/datomic-pro             {:mvn/version "1.0.6527"}
+             com.datomic/peer                    {:mvn/version "1.0.6733"}
              org.clojure/clojure                 {:mvn/version "1.11.1"}
              org.suskalo/discljord               {:mvn/version "1.3.0"}
              }
  :aliases   {
              :test    {:extra-deps  {speclj/speclj {:mvn/version "3.4.3"}}
-                       :extra-paths ["spec"]}
+                       :extra-paths ["dev" "spec"]}
              :migrate {:main-opts ["-m" "c3kit.bucket.migrate"]}
              :repl    {:main-opts ["-e" "(require,'noob.repl)" "-e" "(in-ns,'noob.repl)" "--repl"] :extra-paths ["dev"]}
              :run     {:main-opts ["-m" "noob.main"]}
