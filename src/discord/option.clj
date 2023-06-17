@@ -24,3 +24,5 @@
 (def ->double! (partial create true 10))
 (def ->attachment (partial create false 11))
 (def ->attachment! (partial create true 11))
+
+(defn get-option [request key] (get-in request [:data :options key]))

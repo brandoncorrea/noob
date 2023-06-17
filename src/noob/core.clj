@@ -8,3 +8,6 @@
     (pos? pow) (apply * 1 (repeat pow n))
     (neg? pow) (apply / 1 (repeat (- pow) n))
     :else 1))
+
+(defn niblet-term [amount]
+  (str amount " Niblet" (when (not= 1 amount) "s")))

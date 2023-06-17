@@ -9,6 +9,7 @@
 (defn stub-discord []
   (redefs-around [discord-ws/status-update! (stub :discord/status-update!)
                   interaction/reply! (stub :discord/reply-interaction!)
+                  interaction/reply-ephemeral! (stub :discord/reply-interaction-ephemeral!)
                   discord-rest/create-message! (stub :discord/create-message!)
                   discord-rest/get-current-user! (stub :discord/get-current-user!)]))
 
@@ -21,3 +22,9 @@
 
 (defn stub-now [time]
   (redefs-around [time/now (stub :now {:return time})]))
+
+(defmacro should-have-replied [request message]
+  `(should-have-invoked :discord/reply-interaction! {:with [~request ~message]}))
+
+(defmacro should-have-replied-ephemeral [request message]
+  `(should-have-invoked :discord/reply-interaction-ephemeral! {:with [~request ~message]}))
