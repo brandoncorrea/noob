@@ -9,6 +9,7 @@
             [noob.events.message-create]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
+            [noob.slash.give]
             [noob.slash.recurrent]))
 
 (def start-db #(app/start! [db/service]))

@@ -33,11 +33,6 @@
 (defn get! [uri]
   (http/get (str root uri) (authorize {:as :json})))
 
-(defn reply-interaction! [{:keys [id token]} content]
-  (when (and id token content)
-    (post! (str "/interactions/" id "/" token "/callback")
-           {:type 4 :data {:content content}})))
-
 (defn create-guild-slash-command!
   ([guild name] (create-guild-slash-command! guild name nil))
   ([guild name description] (create-guild-slash-command! guild name description nil))

@@ -6,31 +6,7 @@
 
 (describe "Discord API"
   (with-stubs)
-
-  (around [it]
-    (with-redefs [http/post (stub :post)]
-      (it)))
-
-  (context "reply-interaction!"
-    (it "missing token"
-      (sut/reply-interaction! {:id 1} "Some content")
-      (should-not-have-invoked :post))
-
-    (it "missing missing id"
-      (sut/reply-interaction! {:token "abc"} "Some content")
-      (should-not-have-invoked :post))
-
-    (it "missing missing content"
-      (sut/reply-interaction! {:id 1 :token "abc"} nil)
-      (should-not-have-invoked :post))
-
-    (it "posts message"
-      (sut/reply-interaction! {:id 1 :token "abc"} "Some content")
-      (should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
-                                         {:form-params  {:type 4 :data {:content "Some content"}}
-                                          :content-type :json
-                                          :headers      {"Authorization" (str "Bot " config/token)}}]})))
-
+  (redefs-around [http/post (stub :post)])
 
   (context "create-application-slash-command!"
     (it "missing name"
