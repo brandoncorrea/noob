@@ -6,7 +6,6 @@
             [noob.bot :as bot]
             [noob.config :as config]
             [noob.events.core :as events]
-            [noob.events.message-create]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
             [noob.slash.give]
