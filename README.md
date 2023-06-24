@@ -30,7 +30,7 @@ structure and add your Discord bot's token:
 
 ### Download
 
-    # Download and unzip datomic-pro 1.0.6269
+    # Download and unzip datomic-pro 1.0.6733
     curl https://datomic-pro-downloads.s3.amazonaws.com/1.0.6733/datomic-pro-1.0.6733.zip -O
     unzip datomic-pro-1.0.6733.zip
 
