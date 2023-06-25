@@ -1,9 +1,7 @@
-(ns discord.component
+(ns discord.components.hiccup
   (:require [c3kit.apron.corec :as ccc]
             [clojure.string :as str]
-            [discord.components.button]
-            [discord.components.core :as components]
-            [discord.components.input]))
+            [discord.components.component :as component]))
 
 (defn re-join-keys [re keys tag options]
   (->> (re-seq re (name tag))
@@ -17,7 +15,7 @@
     (cond-> (apply dissoc options keys)
             (ccc/not-blank? val) (assoc primary-key val))))
 
-(def join-ids (partial join-keys #"#[^\.#]*" [:custom_id :id]))
+(def join-ids (partial join-keys #"#[^\.#]*" [:custom_id :custom-id :id]))
 (def join-classes (partial join-keys #"\.[^\.#]*" [:class]))
 (defn add-class-list [{:keys [class] :as m}]
   (assoc m :class-list (-> class str (str/split #"\s"))))
@@ -33,9 +31,6 @@
     (drop 2 hiccup)
     (rest hiccup)))
 
-(defn ->tag [hiccup] (->> hiccup first name (re-find #"^[a-zA-Z]*") keyword))
+(defn ->tag [hiccup] (->> hiccup first name (re-find #"^[^#.]*") keyword))
 (def split-hiccup (juxt ->tag ->options ->body))
-(defn <-hiccup [hiccup] (apply components/->component (split-hiccup hiccup)))
-
-(defmethod components/->component :tr [_ _ body]
-  {:type 1 :components (map <-hiccup body)})
+(defn <-hiccup [hiccup] (apply component/->component (split-hiccup hiccup)))

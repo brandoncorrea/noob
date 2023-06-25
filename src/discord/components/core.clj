@@ -1,12 +1,11 @@
-(ns discord.components.core)
-(defmulti ->component (fn [kind _options _body] kind))
+(ns discord.components.core
+  "The glue that holds all the components together"
+  (:require [discord.components.action-row]
+            [discord.components.button]
+            [discord.components.fragment]
+            [discord.components.hiccup :as hiccup]
+            [discord.components.input]
+            [discord.components.option]
+            [discord.components.select]))
 
-(defn style-or-default [{:keys [style class-list]} styles default]
-  (let [style (if (number? style) style (some-> style name))]
-    (or (styles style)
-        style
-        (some styles class-list)
-        default)))
-
-(defn wrap-style [m styles default]
-  (assoc m :style (style-or-default m styles default)))
+(defn <-hiccup [hiccup] (hiccup/<-hiccup hiccup))
