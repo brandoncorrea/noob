@@ -1,7 +1,12 @@
 (ns noob.config
-  (:require [clojure.edn :as edn]))
+  (:require [c3kit.apron.env :as env]))
 
-(def config (-> "config.edn" slurp edn/read-string))
-(def token (:token config))
-(def app-id (:app-id config))
-(def dev-guild (:dev-guild config))
+(def env
+  {:token     (env/env "DISCORD_TOKEN")
+   :app-id    (env/env "DISCORD_APP_ID")
+   :dev-guild (env/env "DISCORD_DEV_GUILD")
+   })
+
+(def token (:token env))
+(def app-id (:app-id env))
+(def dev-guild (:dev-guild env))

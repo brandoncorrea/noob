@@ -8,6 +8,6 @@
 /.nrepl-port
 .hgignore
 .hg/
-config.edn
+.env
 datomic-pro-1.0.6735
 .java-version
