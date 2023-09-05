@@ -1,21 +1,14 @@
 # noob
 
-A Discord bot designed to... well, that part is up to you.
+A Discord bot to empower the noob.
 
 ## Setup
 
-### Java
+    # Java
+    brew install openjdk@17
 
-Java 8 is required for various reasons:
-
-1. Database operations (`clj -Mmigrate:test`) will fail on later versions of Java.
-2. TODO: Find the reasons and update to Java 13+ when possible.
-
-[How to Install Java 8 on Mac w/ HomeBrew](https://stackoverflow.com/a/28635465)
-
-### Leiningen
-
-    brew install leiningen
+    # Clojure
+    brew install clojure
 
 ## Config
 
@@ -30,9 +23,10 @@ structure and add your Discord bot's token:
 
 ### Download
 
-    # Download and unzip datomic-pro 1.0.6733
-    curl https://datomic-pro-downloads.s3.amazonaws.com/1.0.6733/datomic-pro-1.0.6733.zip -O
-    unzip datomic-pro-1.0.6733.zip
+    # Download and unzip datomic-pro 1.0.6735
+    curl https://datomic-pro-downloads.s3.amazonaws.com/1.0.6735/datomic-pro-1.0.6735.zip -O
+    unzip datomic-pro-1.0.6735.zip
+    rm datomic-pro-1.0.6735.zip
 
 ### Start Datomic
 
@@ -55,6 +49,7 @@ Make sure datomic is running...
 
     # clojure specs:
     clj -Mspec:test
+
     # clojure specs automatically running when fileds are changed:
     clj -Mspec:test -a
 
