@@ -5,7 +5,7 @@ A Discord bot to empower the noob.
 ## Setup
 
     # Java
-    brew install openjdk@17
+    brew install openjdk@21
 
     # Clojure
     brew install clojure
@@ -31,7 +31,7 @@ structure and add your Discord bot's token:
 ### Start Datomic
 
     java -v
-    # make sure you're running java 1.8
+    # make sure you're running Java 21
     bin/db
 
 ### Schema / Migration
