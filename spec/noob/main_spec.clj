@@ -1,24 +1,23 @@
 (ns noob.main-spec
-  (:require [discljord.events :as discord-events]
+  (:require [c3kit.apron.app :as app]
+            [c3kit.bucket.db :as db]
+            [discljord.events :as discord-events]
             [noob.config :as config]
             [noob.events.core :as events]
             [noob.main :as sut]
             [noob.spec-helper :as spec-helper]
-            [speclj.core :refer :all]
-            [speclj.stub :as stub]))
+            [speclj.core :refer :all]))
 
 (describe "Main"
   (with-stubs)
   (spec-helper/stub-bot)
 
-  (around [it]
-    (with-redefs [discord-events/message-pump! (stub :discord/message-pump!)]
-      (it)))
-
   (it "initializes with bot token"
-    (sut/-main)
-    (let [[init! pump! stop!] @stub/*stubbed-invocations*]
-      (should= [:bot/init! [config/token]] init!)
-      (should= [:discord/message-pump! [:bot/events events/handle-event]] pump!)
-      (should= [:bot/stop! []] stop!)))
+    (with-redefs [discord-events/message-pump! (stub :discord/message-pump!)
+                  app/start!                   (stub :app/start!)]
+      (sut/-main)
+      (should-have-invoked :app/start! {:with [[db/service]]})
+      (should-have-invoked :bot/init! {:with [config/token]})
+      (should-have-invoked :discord/message-pump! {:with [:bot/events events/handle-event]})
+      (should-have-invoked :bot/stop!)))
   )
