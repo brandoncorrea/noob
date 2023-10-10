@@ -3,13 +3,17 @@
             [c3kit.apron.log :as log]
             [c3kit.bucket.db :as db]
             [c3kit.bucket.spec-helper :as bucket-helper]
+            [noob.product :as product]
             [noob.schema.command :as command.schema]
+            [noob.schema.product :as product.schema]
             [noob.schema.user :as user.schema]
             [noob.user :as user]
             [speclj.core :refer :all])
   (:import (clojure.lang IDeref)))
 
-(def schemas [user.schema/all command.schema/all])
+(def schemas [user.schema/all
+              command.schema/all
+              product.schema/all])
 
 (deftype Entity [atm kind]
   ;; MDM - An Entity is reloaded from the database each time is de-referenced (@).
@@ -27,19 +31,25 @@
   (let [values (ccc/->options opt-args)]
     (reset! (e-atom entity) (db/tx values))))
 
-(def bill (entity :user))
-(def ted (entity :user))
-
 (defmulti -init-kind! identity)
 
+(def bill (entity :user))
+(def ted (entity :user))
 (defmethod -init-kind! :user [_]
   (init-entity! bill (user/create! "bill-id"))
   (init-entity! ted (user/create! "ted-id")))
 
+(def stick (entity :product))
+(def propeller-hat (entity :product))
+(defmethod -init-kind! :product [_]
+  (init-entity! stick (product/create! "Stick" :main-hand :description "A sticky stick."))
+  (init-entity! propeller-hat (product/create! "Propeller Hat" :head)))
+
 (def deps
   ;; Add entities here with a list of entities they depend on (shallow).
-  {:user []
-   :all  [:user]})
+  {:user    []
+   :product []
+   :all     [:user :product]})
 
 (defmethod -init-kind! :all [_])
 

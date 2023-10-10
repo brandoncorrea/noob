@@ -14,15 +14,13 @@
   (before (clear-bot!))
   (after (clear-bot!))
 
-  (around [it]
-    (with-redefs [async/chan                     (fn [buf] {:chan buf})
+  (redefs-around [async/chan                     (fn [buf] {:chan buf})
                   async/close!                   (stub :async/close!)
                   discord-ws/connect-bot!        (stub :discord/connect-bot! {:return "gateway"})
                   discord-ws/disconnect-bot!     (stub :discord/disconnect-bot!)
                   discord-rest/start-connection! (stub :discord/start-connection! {:return "rest"})
                   discord-rest/stop-connection!  (stub :discord/stop-connection!)
-                  discord-rest/get-current-user! (stub :discord/get-current-user! {:return (delay {:id 234})})]
-      (it)))
+                  discord-rest/get-current-user! (stub :discord/get-current-user! {:return (delay {:id 234})})])
 
   (it "initializes the bot state"
     (let [channel {:chan 100}]

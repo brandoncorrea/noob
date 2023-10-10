@@ -6,6 +6,11 @@
 
 (def dev-commands
   [
+   ["shop" "Get in, loser. We're going shopping!"]
+   ])
+
+(def global-commands
+  [
    ["daily" "Redeem your daily Niblets!"]
    ["weekly" "Redeem your weekly Niblets!"]
    ["give" "Give some niblets to that special someone"
@@ -13,10 +18,7 @@
      (option/->int! "amount" "The number of niblets to bestow")]]
    ])
 
-(def global-commands
-  [])
-
-(def slash-name (comp :name :data))
+(def slash-name (comp (some-fn :custom-id :name) :data))
 (defmulti handle-slash slash-name)
 (defmethod handle-slash :default [request]
   (log/debug (str "Unhandled slash command: " (slash-name request) " " (pr-str request))))

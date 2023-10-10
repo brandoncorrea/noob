@@ -14,7 +14,8 @@
 
   (it "initializes with bot token"
     (with-redefs [discord-events/message-pump! (stub :discord/message-pump!)
-                  app/start!                   (stub :app/start!)]
+                  app/start!                   (stub :app/start!)
+                  sut/wrap-error               identity]
       (sut/-main)
       (should-have-invoked :app/start! {:with [[db/service]]})
       (should-have-invoked :bot/init! {:with [config/token]})

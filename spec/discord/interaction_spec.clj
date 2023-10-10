@@ -4,9 +4,17 @@
             [noob.config :as config]
             [speclj.core :refer :all]))
 
+(defmacro should-post-with-data [data]
+  `(should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
+                                      {:form-params  {:type 4
+                                                      :data ~data}
+                                       :content-type :json
+                                       :headers      {"Authorization" "Bot bot-token"}}]}))
+
 (describe "Discord Interactions"
   (with-stubs)
-  (redefs-around [http/post (stub :post)])
+  (redefs-around [http/post    (stub :post)
+                  config/token "bot-token"])
 
   (it "interaction flags"
     (should= 2r1 (:cross-posted sut/flags))
@@ -20,6 +28,10 @@
     (should= 2r100000000 (:failed-to-mention-roles sut/flags))
     (should= 2r1000000000000 (:suppress-notifications sut/flags))
     (should= 2r10000000000000 (:voice-message sut/flags)))
+
+  (it "reply-ephemeral!"
+    (sut/reply-ephemeral! {:id 1 :token "abc"} "Some content")
+    (should-post-with-data {:content "Some content" :flags (:ephemeral sut/flags)}))
 
   (context "reply-interaction!"
     (it "missing token"
@@ -36,26 +48,16 @@
 
     (it "posts message"
       (sut/reply! {:id 1 :token "abc"} "Some content")
-      (should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
-                                         {:form-params  {:type 4 :data {:content "Some content"}}
-                                          :content-type :json
-                                          :headers      {"Authorization" (str "Bot " config/token)}}]}))
+      (should-post-with-data {:content "Some content"}))
 
     (it "with flags"
       (sut/reply! {:id 1 :token "abc"} "Some content" :voice-message :cross-posted :urgent)
-      (should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
-                                         {:form-params  {:type 4
-                                                         :data {:content "Some content"
-                                                                :flags   (sut/->flag [:voice-message :cross-posted :urgent])}}
-                                          :content-type :json
-                                          :headers      {"Authorization" (str "Bot " config/token)}}]})))
+      (should-post-with-data {:content "Some content"
+                              :flags   (sut/->flag [:voice-message :cross-posted :urgent])}))
 
-  (it "reply-ephemeral!"
-    (sut/reply-ephemeral! {:id 1 :token "abc"} "Some content")
-    (should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
-                                       {:form-params  {:type 4
-                                                       :data {:content "Some content"
-                                                              :flags   (:ephemeral sut/flags)}}
-                                        :content-type :json
-                                        :headers      {"Authorization" (str "Bot " config/token)}}]}))
+    (it "with hiccup"
+      (sut/reply! {:id 1 :token "abc"} [:select [:option "foo"]])
+      (should-post-with-data {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+
+    )
   )

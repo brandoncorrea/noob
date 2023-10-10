@@ -1,5 +1,7 @@
 (ns discord.interaction
-  (:require [discord.api :as api]
+  (:require [c3kit.apron.corec :as ccc]
+            [discord.api :as api]
+            [discord.components.core :as components]
             [noob.core :as core]))
 
 (def flags
@@ -17,15 +19,19 @@
    :voice-message           (core/** 2 13)
    })
 
-(defn ->flag [fs]
-  (transduce (map flags) + fs))
+(defn ->flag [fs] (ccc/sum-by flags fs))
 
-(defn reply! [{:keys [id token]} content & fs]
+(defn- ->data [content]
+  (if (string? content)
+    {:content content}
+    {:components [{:type 1 :components [(components/<-hiccup content)]}]}))
+
+(defn reply! [{:keys [id token]} content & flags]
   (when (and id token content)
     (api/post! (str "/interactions/" id "/" token "/callback")
-               (cond-> {:type 4 :data {:content content}}
-                       (seq fs)
-                       (assoc-in [:data :flags] (->flag fs))))))
+               (cond-> {:type 4 :data (->data content)}
+                       (seq flags)
+                       (assoc-in [:data :flags] (->flag flags))))))
 
 (defn reply-ephemeral! [payload content]
   (reply! payload content :ephemeral))

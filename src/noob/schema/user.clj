@@ -6,6 +6,7 @@
    :id         s/id
    :discord-id {:type :string :db [:unique-value]}
    :niblets    {:type :long}
+   :inventory  {:type [:ref]}
    })
 
 (def all [user])

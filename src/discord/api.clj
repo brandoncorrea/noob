@@ -33,6 +33,8 @@
 (defn get! [uri]
   (http/get (str root uri) (authorize {:as :json})))
 
+(defn delete! [uri] (http/delete (str root uri) (authorize nil)))
+
 (defn create-guild-slash-command!
   ([guild name] (create-guild-slash-command! guild name nil))
   ([guild name description] (create-guild-slash-command! guild name description nil))
@@ -45,7 +47,28 @@
                :description description
                :options     options})))))
 
-(def create-global-slash-command! (partial create-guild-slash-command! nil))
+(defn delete-guild-slash-command! [guild-id command-id]
+  (delete! (str "/applications/" config/app-id "/guilds/" guild-id "/commands/" command-id)))
+
+(defn delete-global-slash-command! [command-id]
+  (delete! (str "/applications/" config/app-id "/commands/" command-id)))
+
+(defn create-global-slash-command!
+  ([name] (create-guild-slash-command! nil name))
+  ([name description] (create-guild-slash-command! nil name description))
+  ([name description options] (create-guild-slash-command! nil name description options)))
 
 (defn guild-preview [guild-id]
   (get! (str "/guilds/" guild-id "/preview")))
+
+(defn- get-body-or-empty [url]
+  (let [res (get! url)]
+    (if (= 200 (:status res))
+      (:body res)
+      [])))
+
+(defn get-guild-commands [guild-id]
+  (get-body-or-empty (str "/applications/" config/app-id "/guilds/" guild-id "/commands")))
+
+(defn get-global-commands []
+  (get-body-or-empty (str "/applications/" config/app-id "/commands")))
