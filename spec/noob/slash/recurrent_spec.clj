@@ -1,6 +1,6 @@
 (ns noob.slash.recurrent-spec
   (:require [c3kit.apron.time :as time]
-            [c3kit.bucket.db :as db]
+            [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill]]
             [noob.command :as command]
             [noob.slash.core :as slash]

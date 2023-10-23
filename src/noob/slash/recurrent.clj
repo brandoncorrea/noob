@@ -1,5 +1,5 @@
 (ns noob.slash.recurrent
-  (:require [c3kit.bucket.db :as db]
+  (:require [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
             [noob.command :as command]
             [noob.slash.core :as slash]
@@ -45,13 +45,12 @@
       (assoc user :niblets niblets))))
 
 (defn- award-niblets! [kind user command request]
-  (let [user    (-> user (or (user/create (user/discord-id request))) (add-niblets kind))
-        command (-> command (or (command/create-command kind user)) command/bump-runtime)]
-    (db/tx* [user command])
+  (let [user (db/tx (add-niblets user kind))]
+    (command/bump-runtime! (or command (command/create-command kind user)))
     (interaction/reply! request (str (user/username request) " received " (:niblets user) " Niblets!"))))
 
 (defn- handle-recurrent [kind request]
-  (let [user      (user/current request)
+  (let [user      (user/find-or-create (user/discord-id request))
         command   (command/by-user kind user)
         time-left (command/millis-to-reset command)]
     (if (some-> time-left pos?)

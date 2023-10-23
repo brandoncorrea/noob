@@ -1,8 +1,8 @@
 (ns noob.bogus
   (:require [c3kit.apron.corec :as ccc]
             [c3kit.apron.log :as log]
-            [c3kit.bucket.db :as db]
-            [c3kit.bucket.spec-helper :as bucket-helper]
+            [c3kit.bucket.api :as db]
+            [c3kit.bucket.spec-helperc :as helperc]
             [noob.product :as product]
             [noob.schema.command :as command.schema]
             [noob.schema.product :as product.schema]
@@ -73,6 +73,7 @@
 
 (defn with-kinds [& kinds]
   (list
-    (bucket-helper/with-db-schemas schemas)
+    (helperc/with-schemas schemas)
     (before (reset! initialized-kinds #{})
-            (apply init! kinds))))
+            (apply init! kinds))
+    ))

@@ -1,6 +1,0 @@
-{:uri                 "datomic:dev://localhost:4334/noob"
- :migration-dir       "dev/noob/migrations"
- :migration-ns-prefix "noob.migrations"
- :full-schema         noob.schema.full/full-schema
- :partition           :noob
- }

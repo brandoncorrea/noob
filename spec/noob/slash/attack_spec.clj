@@ -1,5 +1,5 @@
 (ns noob.slash.attack-spec
-  (:require [c3kit.bucket.db :as db]
+  (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill ted]]
             [noob.slash.attack :as sut]
             [noob.slash.core :as slash]

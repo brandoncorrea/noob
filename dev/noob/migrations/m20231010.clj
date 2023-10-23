@@ -1,5 +1,5 @@
 (ns noob.migrations.m20231010
-  (:require [c3kit.bucket.db :as db]))
+  (:require [c3kit.bucket.api :as db]))
 
 (defn ->product [name level price slot & {:as options}]
   (assoc options :kind :product

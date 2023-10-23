@@ -1,5 +1,5 @@
 (ns noob.slash.shop-spec
-  (:require [c3kit.bucket.db :as db]
+  (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
             [noob.slash.core :as slash]
             [noob.slash.shop :as sut]
@@ -61,12 +61,12 @@
     )
 
   (context "show menu"
-    (with products (db/find-all :product :name))
+    (with products (db/find :product))
     (with request {:data   {:name "shop"}
                    :member {:user {:id (:discord-id @bill) :username "Bill"}}})
 
     (it "no inventory"
-      (run! db/retract @products)
+      (run! db/delete @products)
       (slash/handle-name @request)
       (should-have-replied @request "There are no items available to purchase."))
 
@@ -87,7 +87,7 @@
 
     (it "user owns nothing"
       (slash/handle-name @request)
-      (should-have-replied @request (sut/->shop-menu [@propeller-hat @stick])))
+      (should-have-replied @request (sut/->shop-menu [@stick @propeller-hat])))
 
     )
 
@@ -102,7 +102,7 @@
         (should-have-replied-ephemeral request "That item doesn't seem to exist.")))
 
     (it "item does not exist"
-      (db/retract @stick)
+      (db/delete @stick)
       (slash/handle-custom-id @request)
       (should-have-replied-ephemeral @request "That item doesn't seem to exist."))
 
@@ -115,7 +115,7 @@
       (db/tx @propeller-hat :price 0 :level 1)
       (let [request (assoc-in @request [:data :values] [(str (:id @propeller-hat))])
             bill-id (:discord-id @bill)]
-        (db/retract @bill)
+        (db/delete @bill)
         (slash/handle-custom-id request)
         (should-have-replied-ephemeral request "Propeller Hat has been added to your inventory!")
         (let [{:keys [inventory loadout niblets]} (db/ffind-by :user :discord-id bill-id)]

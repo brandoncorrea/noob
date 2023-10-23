@@ -22,12 +22,12 @@
 (describe "Slash Core"
 
   (it "dev commands"
-    (should= 1 (count sut/dev-commands))
-    (dev-should-have "attack" "Attack another player!"
-                     [(option/->user! "target" "The person you want to attack.")]))
+    (should= 0 (count sut/dev-commands)))
 
   (it "global commands"
-    (should= 5 (count sut/global-commands))
+    (should= 6 (count sut/global-commands))
+    (global-should-have "attack" "Attack another player!"
+                        [(option/->user! "target" "The person you want to attack.")])
     (global-should-have "daily" "Redeem your daily Niblets!")
     (global-should-have "give" "Give some niblets to that special someone"
                         [(option/->user! "recipient" "The recipient of your handout")

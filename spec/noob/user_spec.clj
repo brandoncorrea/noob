@@ -1,5 +1,5 @@
 (ns noob.user-spec
-  (:require [c3kit.bucket.db :as db]
+  (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
             [noob.user :as sut]
             [speclj.core :refer :all]))

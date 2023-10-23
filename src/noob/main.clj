@@ -3,7 +3,7 @@
             [c3kit.apron.legend :as legend]
             [c3kit.apron.log :as log]
             [c3kit.apron.util :as util]
-            [c3kit.bucket.db :as db]
+            [c3kit.bucket.api :as db]
             [discljord.events :as discord-events]
             [noob.bot :as bot]
             [noob.config :as config]

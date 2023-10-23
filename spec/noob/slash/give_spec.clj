@@ -1,5 +1,5 @@
 (ns noob.slash.give-spec
-  (:require [c3kit.bucket.db :as db]
+  (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus]
             [noob.bogus :refer [bill ted]]
             [noob.slash.core :as slash]

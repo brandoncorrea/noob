@@ -1,6 +1,6 @@
 (ns noob.user
   (:require [c3kit.apron.corec :as ccc]
-            [c3kit.bucket.db :as db]))
+            [c3kit.bucket.api :as db]))
 
 (defn by-discord-id [id] (db/ffind-by :user :discord-id id))
 (def discord-user (comp :user :member))
@@ -11,7 +11,7 @@
 
 (defn create [discord-id]
   {:kind       :user
-   :id         (db/tempid)
+   ;:id         (db/tempid)
    :discord-id discord-id})
 
 (def create! (comp db/tx create))
@@ -42,7 +42,7 @@
     10))
 
 (defn niblets [user] (:niblets user 0))
-(defn owns? [user item] (contains? (:inventory user) (:id item)))
+(defn owns? [user item] (some (partial = (:id item)) (:inventory user)))
 (defn unslotted? [user slot]
   (not-any? #(-> % db/entity :slot (= slot)) (:loadout user)))
 

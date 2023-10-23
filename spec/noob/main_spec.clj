@@ -1,6 +1,6 @@
 (ns noob.main-spec
   (:require [c3kit.apron.app :as app]
-            [c3kit.bucket.db :as db]
+            [c3kit.bucket.api :as db]
             [discljord.events :as discord-events]
             [noob.config :as config]
             [noob.events.core :as events]

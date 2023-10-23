@@ -1,6 +1,6 @@
 (ns noob.slash.shop
   (:require [c3kit.apron.schema :as schema]
-            [c3kit.bucket.db :as db]
+            [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
             [noob.product :as product]
             [noob.slash.core :as slash]
@@ -48,7 +48,7 @@
     (interaction/reply-ephemeral! request (str (:name item) " has been added to your inventory!"))))
 
 (defmethod slash/handle-custom-id "shop-menu" [request]
-  (let [item (->> request :data :values first schema/->int (db/entity-of-kind :product))
+  (let [item (->> request :data :values first schema/->int (db/entity :product))
         user (delay (-> request user/discord-id user/find-or-create))]
     (cond
       (nil? item) (interaction/reply-ephemeral! request "That item doesn't seem to exist.")
