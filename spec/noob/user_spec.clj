@@ -1,6 +1,7 @@
 (ns noob.user-spec
   (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
+            [noob.roll :as roll]
             [noob.user :as sut]
             [speclj.core :refer :all]))
 
@@ -32,16 +33,6 @@
     (should= 10 (sut/level {:xp 2700}))
     (should= 10 (sut/level {:xp 100000})))
 
-  (it "ability roll"
-    (with-redefs [rand (constantly 0.5)]
-      (should= 1.5 (sut/ability-roll 1 0))
-      (should= 3.015 (sut/ability-roll 1 1) 0.001)
-      (should= 3 (sut/ability-roll 2 0) 0.001)
-      (should= 10.5 (sut/ability-roll 7 0) 0.001)
-      (should= 12 (sut/ability-roll 8 0) 0.001)
-      (should= 16.65 (sut/ability-roll 1 10))
-      (should= 10.65 (sut/ability-roll 2 5) 0.001)))
-
   (it "gain-xp"
     (should= {:xp 25} (sut/gain-xp {} 25 1))
     (should= {:xp 27} (sut/gain-xp {} 25 2))
@@ -55,7 +46,7 @@
 
   (context "roll"
 
-    (redefs-around [sut/ability-roll (stub :ability-roll)])
+    (redefs-around [roll/ability (stub :ability-roll)])
 
     (it "no equipment"
       (sut/roll @bill :attack)

@@ -1,6 +1,7 @@
 (ns noob.user
   (:require [c3kit.apron.corec :as ccc]
-            [c3kit.bucket.api :as db]))
+            [c3kit.bucket.api :as db]
+            [noob.roll :as roll]))
 
 (defn by-discord-id [id] (db/ffind-by :user :discord-id id))
 (def discord-user (comp :user :member))
@@ -8,13 +9,8 @@
 (def discord-id (comp :id discord-user))
 (def current (comp by-discord-id discord-id))
 (defn mention [user] (str "<@" (:discord-id user user) \>))
-
-(defn create [discord-id]
-  {:kind       :user
-   ;:id         (db/tempid)
-   :discord-id discord-id})
-
-(def create! (comp db/tx create))
+(defn create [discord-id] {:kind :user :discord-id discord-id})
+(defn create! [discord-id] (db/tx (create discord-id)))
 
 (defn update-niblets [f user amount]
   (if (:niblets user)
@@ -48,25 +44,16 @@
 
 (defn equip [user item] (update user :loadout conj (:id item)))
 
-(defn ability-roll [level ability-score]
-  (let [stat-factor   (+ 1 (/ ability-score 100))
-        base-factor   (+ (* level stat-factor) ability-score)
-        random-factor (+ 1 (rand))]
-    (* base-factor random-factor)))
-
-(defn roll [user ability]
+(defn ability-score [user ability]
   (->> (:loadout user)
        (ccc/map-some (comp ability db/entity))
-       (reduce +)
-       (ability-roll (level user))))
+       (reduce +)))
 
-(defn xp-reward [user base-factor challenge-level]
-  (let [level-difference (- challenge-level (level user))
-        penalty          (/ level-difference 10)]
-    (int (* base-factor (+ 1 penalty)))))
+(defn roll [user ability]
+  (roll/ability (level user) (ability-score user ability)))
 
 (defn gain-xp [user base-factor challenge-level]
-  (let [reward (xp-reward user base-factor challenge-level)
+  (let [reward (roll/xp-reward (level user) base-factor challenge-level)
         xp     (+ (:xp user 0) reward)]
     (assoc user :xp xp)))
 

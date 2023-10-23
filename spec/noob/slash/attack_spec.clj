@@ -1,6 +1,7 @@
 (ns noob.slash.attack-spec
   (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill ted]]
+            [noob.roll :as roll]
             [noob.slash.attack :as sut]
             [noob.slash.core :as slash]
             [noob.spec-helper :as spec-helper :refer [should-have-created-message should-have-replied]]
@@ -33,13 +34,13 @@
         (slash/handle-name @request)
         (should-have-replied @request (str (user/mention @bill) " fails to attack " (user/mention @ted)))
         (should= 100 (:xp @bill))
-        (should= (user/xp-reward @ted 15 2) (:xp @ted))))
+        (should= (roll/xp-reward 1 15 2) (:xp @ted))))
 
     (it "succeeds attack"
       (with-redefs [user/roll (fn [_user ability] (if (= :attack ability) 1 0))]
         (slash/handle-name @request)
         (should-have-replied @request (str (user/mention @bill) " attacks " (user/mention @ted)))
-        (should= (+ 100 (user/xp-reward @bill 25 1)) (:xp @bill))
+        (should= (+ 100 (roll/xp-reward 2 25 1)) (:xp @bill))
         (should-be-nil (:xp @ted))))
 
     (it "winner levels up"
