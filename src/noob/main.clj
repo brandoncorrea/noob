@@ -10,6 +10,7 @@
             [noob.events.core :as events]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
+            [noob.slash.attack]
             [noob.slash.give]
             [noob.slash.love]
             [noob.slash.recurrent]

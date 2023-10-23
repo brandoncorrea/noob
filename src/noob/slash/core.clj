@@ -6,10 +6,11 @@
 
 (def dev-commands [])
 
-;; TODO [BAC]: Implement commands: attack, steal, stats, help, inventory
+;; TODO [BAC]: Implement commands: steal, stats, help, inventory
 
 (def global-commands
   [
+   ["attack" "Attack another player!" [(option/->user! "target" "The person you want to attack.")]]
    ["daily" "Redeem your daily Niblets!"]
    ["give" "Give some niblets to that special someone"
     [(option/->user! "recipient" "The recipient of your handout")

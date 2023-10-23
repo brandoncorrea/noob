@@ -40,3 +40,8 @@
   (let [{:keys [id channel-id]} (:message request)]
     (when (and id channel-id content)
       (api/patch! (str "/channels/" channel-id "/messages/" id) (->data content)))))
+
+(defn create-message! [request content]
+  (let [channel-id (:channel-id request)]
+    (when (and channel-id content)
+      (api/post! (str "/channels/" channel-id "/messages") (->data content)))))

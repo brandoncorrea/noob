@@ -22,7 +22,9 @@
 (describe "Slash Core"
 
   (it "dev commands"
-    (should= 0 (count sut/dev-commands)))
+    (should= 1 (count sut/dev-commands))
+    (dev-should-have "attack" "Attack another player!"
+                     [(option/->user! "target" "The person you want to attack.")]))
 
   (it "global commands"
     (should= 5 (count sut/global-commands))
