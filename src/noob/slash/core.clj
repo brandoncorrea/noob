@@ -8,6 +8,8 @@
   [
    ])
 
+;; TODO [BAC]: Implement commands: attack, steal, love, stats, help, inventory
+
 (def global-commands
   [
    ["daily" "Redeem your daily Niblets!"]
