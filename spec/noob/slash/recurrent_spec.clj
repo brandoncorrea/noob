@@ -40,29 +40,37 @@
       (let [request (->daily-request {:discord-id "napoleon-id"} "Napoleon")]
         (slash/handle-name request)
         (let [{:keys [id niblets]} (db/ffind-by :user :discord-id "napoleon-id")]
-          (should (pos? niblets))
-          (should-have-replied request (str "Napoleon received " niblets " Niblets!"))
+          (should= 20 niblets)
+          (should-have-replied request "You received 20 Niblets!")
           (should= now (:last-ran-at (db/ffind-by :command :user id :interval :daily))))))
 
     (it "succeeds with missing command"
       (slash/handle-name @bill-request)
-      (should (pos? (:niblets @bill)))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 20 (:niblets @bill))
+      (should-have-replied @bill-request "You received 20 Niblets!")
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :daily))))
 
     (it "succeeds with existing command"
-      (command/create-daily-command! @bill (time/before now (time/hours 25)))
+      (command/create-daily-command! @bill (-> 5 time/days time/ago))
       (slash/handle-name @bill-request)
-      (should (pos? (:niblets @bill)))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 20 (:niblets @bill))
+      (should-have-replied @bill-request "You received 20 Niblets!")
       (should= 1 (db/count-by :command :user (:id @bill) :interval :daily))
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :daily))))
 
     (it "succeeds when user has niblets"
       (db/tx @bill :niblets 100)
       (slash/handle-name @bill-request)
-      (should (> (:niblets @bill) 100))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 120 (:niblets @bill))
+      (should-have-replied @bill-request "You received 20 Niblets!")
+      (should= 1 (db/count-by :command :user (:id @bill) :interval :daily))
+      (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :daily))))
+
+    (it "20% bonus when less than 48 hours from last reward"
+      (command/create-daily-command! @bill (time/ago (time/hours 47)))
+      (slash/handle-name @bill-request)
+      (should= 24 (:niblets @bill))
+      (should-have-replied @bill-request "You received 24 Niblets!")
       (should= 1 (db/count-by :command :user (:id @bill) :interval :daily))
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :daily))))
     )
@@ -89,30 +97,36 @@
       (let [request (->weekly-request {:discord-id "napoleon-id"} "Napoleon")]
         (slash/handle-name request)
         (let [{:keys [id niblets]} (db/ffind-by :user :discord-id "napoleon-id")]
-          (should (pos? niblets))
-          (should-have-replied request (str "Napoleon received " niblets " Niblets!"))
+          (should= 150 niblets)
+          (should-have-replied request "You received 150 Niblets!")
           (should= now (:last-ran-at (db/ffind-by :command :user id :interval :weekly))))))
 
     (it "succeeds with missing command"
       (slash/handle-name @bill-request)
-      (should (pos? (:niblets @bill)))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 150 (:niblets @bill))
+      (should-have-replied @bill-request "You received 150 Niblets!")
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :weekly))))
 
     (it "succeeds with existing command"
-      (command/create-weekly-command! @bill (time/before now (time/days 8)))
+      (command/create-weekly-command! @bill (time/ago (time/days 15)))
       (slash/handle-name @bill-request)
-      (should (pos? (:niblets @bill)))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 150 (:niblets @bill))
+      (should-have-replied @bill-request "You received 150 Niblets!")
       (should= 1 (db/count-by :command :user (:id @bill) :interval :weekly))
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :weekly))))
 
     (it "succeeds when user has niblets"
       (db/tx @bill :niblets 500)
       (slash/handle-name @bill-request)
-      (should (> (:niblets @bill) 550))
-      (should-have-replied @bill-request (str "Bill received " (:niblets @bill) " Niblets!"))
+      (should= 650 (:niblets @bill))
+      (should-have-replied @bill-request (str "You received 150 Niblets!"))
       (should= 1 (db/count-by :command :user (:id @bill) :interval :weekly))
       (should= now (:last-ran-at (db/ffind-by :command :user (:id @bill) :interval :weekly))))
+
+    (it "20% bonus when less than 14 days from last reward"
+      (command/create-weekly-command! @bill (time/ago (time/days 13)))
+      (slash/handle-name @bill-request)
+      (should= 180 (:niblets @bill))
+      (should-have-replied @bill-request "You received 180 Niblets!"))
     )
   )
