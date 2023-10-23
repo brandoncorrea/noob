@@ -4,18 +4,18 @@
             [noob.core :as core]
             [noob.events.core :as events]))
 
-(def dev-commands
-  [
-   ])
+(def dev-commands [])
 
-;; TODO [BAC]: Implement commands: attack, steal, love, stats, help, inventory
+;; TODO [BAC]: Implement commands: attack, steal, stats, help, inventory
 
 (def global-commands
   [
    ["daily" "Redeem your daily Niblets!"]
    ["give" "Give some niblets to that special someone"
-    [(option/->user! "recipient" "That special someone <3")
+    [(option/->user! "recipient" "The recipient of your handout")
      (option/->int! "amount" "The number of niblets to bestow")]]
+   ["love" "Love another player ❤️"
+    [(option/->user! "beloved" "That special someone 🫶")]]
    ["shop" "Get in, loser. We're going shopping!"]
    ["weekly" "Redeem your weekly Niblets!"]
    ])

@@ -25,11 +25,13 @@
     (should= 0 (count sut/dev-commands)))
 
   (it "global commands"
-    (should= 4 (count sut/global-commands))
+    (should= 5 (count sut/global-commands))
     (global-should-have "daily" "Redeem your daily Niblets!")
     (global-should-have "give" "Give some niblets to that special someone"
-                        [(option/->user! "recipient" "That special someone <3")
+                        [(option/->user! "recipient" "The recipient of your handout")
                          (option/->int! "amount" "The number of niblets to bestow")])
+    (global-should-have "love" "Love another player ❤️"
+                        [(option/->user! "beloved" "That special someone 🫶")])
     (global-should-have "shop" "Get in, loser. We're going shopping!")
     (global-should-have "weekly" "Redeem your weekly Niblets!"))
 

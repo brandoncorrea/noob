@@ -7,7 +7,7 @@
 (def username (comp :username discord-user))
 (def discord-id (comp :id discord-user))
 (def current (comp by-discord-id discord-id))
-(def mention (comp formatting/mention-user :discord-id))
+(defn mention [user] (str "<@" (:discord-id user user) \>))
 
 (defn create [discord-id]
   {:kind       :user

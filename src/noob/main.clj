@@ -12,6 +12,7 @@
             [noob.events.ready]
             [noob.schema.full :as schema.full]
             [noob.slash.give]
+            [noob.slash.love]
             [noob.slash.recurrent]
             [noob.slash.shop]))
 
