@@ -17,6 +17,7 @@
                   discord-api/create-guild-slash-command!  (stub :create-guild-command!)
                   discord-ws/create-activity               hash-map
                   config/dev-guild                         456
+                  slash/dev-commands                       [["shop" "Get in, loser. We're going shopping!"]]
                   discord-api/get-global-commands          (constantly [{:name "global-command" :id 123 :type 1}])
                   discord-api/get-guild-commands           {456 [{:name "guild-command" :id 789 :type 1}]}
                   discord-api/delete-guild-slash-command!  (stub :delete-guild-slash-command!)

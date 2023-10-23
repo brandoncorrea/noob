@@ -22,17 +22,16 @@
 (describe "Slash Core"
 
   (it "dev commands"
-    (should= 1 (count sut/dev-commands))
-    (dev-should-have "shop" "Get in, loser. We're going shopping!"))
+    (should= 0 (count sut/dev-commands)))
 
   (it "global commands"
-    (should= 3 (count sut/global-commands))
+    (should= 4 (count sut/global-commands))
     (global-should-have "daily" "Redeem your daily Niblets!")
-    (global-should-have "weekly" "Redeem your weekly Niblets!")
-    (global-should-have "give"
-                        "Give some niblets to that special someone"
+    (global-should-have "give" "Give some niblets to that special someone"
                         [(option/->user! "recipient" "That special someone <3")
-                         (option/->int! "amount" "The number of niblets to bestow")]))
+                         (option/->int! "amount" "The number of niblets to bestow")])
+    (global-should-have "shop" "Get in, loser. We're going shopping!")
+    (global-should-have "weekly" "Redeem your weekly Niblets!"))
 
   (it "normalizes options"
     (should-be-nil (sut/normalize-options nil))

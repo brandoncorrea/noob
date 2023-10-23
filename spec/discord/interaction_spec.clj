@@ -4,16 +4,26 @@
             [noob.config :as config]
             [speclj.core :refer :all]))
 
+(defn ->message-data [data] (merge {:components []} data))
+
+(defn ->request-options [form-params]
+  {:form-params  form-params
+   :content-type :json
+   :headers      {"Authorization" "Bot bot-token"}})
+
 (defmacro should-post-with-data [data]
   `(should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
-                                      {:form-params  {:type 4
-                                                      :data ~data}
-                                       :content-type :json
-                                       :headers      {"Authorization" "Bot bot-token"}}]}))
+                                      (->request-options {:type 4
+                                                          :data (->message-data ~data)})]}))
+
+(defmacro should-patch-with-data [data]
+  `(should-have-invoked :patch {:with ["https://discord.com/api/v10/channels/bar/messages/foo"
+                                       (->request-options (->message-data ~data))]}))
 
 (describe "Discord Interactions"
   (with-stubs)
   (redefs-around [http/post    (stub :post)
+                  http/patch   (stub :patch)
                   config/token "bot-token"])
 
   (it "interaction flags"
@@ -38,11 +48,11 @@
       (sut/reply! {:id 1} "Some content")
       (should-not-have-invoked :post))
 
-    (it "missing missing id"
+    (it "missing id"
       (sut/reply! {:token "abc"} "Some content")
       (should-not-have-invoked :post))
 
-    (it "missing missing content"
+    (it "missing content"
       (sut/reply! {:id 1 :token "abc"} nil)
       (should-not-have-invoked :post))
 
@@ -58,6 +68,26 @@
     (it "with hiccup"
       (sut/reply! {:id 1 :token "abc"} [:select [:option "foo"]])
       (should-post-with-data {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+
+    )
+
+  (context "edit-original!"
+
+    (it "missing message id"
+      (sut/edit-original! {:message {:channel-id "bar"}} "Some content")
+      (should-not-have-invoked :patch))
+
+    (it "missing channel id"
+      (sut/edit-original! {:message {:id "foo"}} "Some content")
+      (should-not-have-invoked :patch))
+
+    (it "patches message"
+      (sut/edit-original! {:message {:id "foo" :channel-id "bar"}} "Some content")
+      (should-patch-with-data {:content "Some content"}))
+
+    (it "with hiccup"
+      (sut/edit-original! {:message {:id "foo" :channel-id "bar"}} [:select [:option "foo"]])
+      (should-patch-with-data {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
 
     )
   )

@@ -21,11 +21,37 @@
     (update user :niblets f amount)
     (assoc user :niblets (f amount))))
 
-(def deposit-niblets (partial update-niblets +))
-(def withdraw-niblets (partial update-niblets -))
+(defn deposit-niblets [user amount] (update-niblets + user amount))
+(defn withdraw-niblets [user amount] (update-niblets - user amount))
 
 (defn transfer-niblets! [from to amount]
   (db/tx* [(withdraw-niblets from amount)
            (deposit-niblets to amount)]))
+
+(defn level [user]
+  (condp > (:xp user 0)
+    100 1
+    250 2
+    450 3
+    700 4
+    1000 5
+    1350 6
+    1750 7
+    2200 8
+    2700 9
+    10))
+
+(defn niblets [user] (:niblets user 0))
+(defn owns? [user item] (contains? (:inventory user) (:id item)))
+(defn unslotted? [user slot]
+  (not-any? #(-> % db/entity :slot (= slot)) (:loadout user)))
+
+(defn equip [user item] (update user :loadout conj (:id item)))
+
+(defn purchase! [user item]
+  (-> user
+      (update :inventory conj (:id item))
+      (withdraw-niblets (:price item))
+      db/tx))
 
 (def find-or-create (some-fn by-discord-id create))

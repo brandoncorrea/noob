@@ -58,8 +58,5 @@
       (interaction/reply! request (not-ready-message kind time-left))
       (award-niblets! kind user command request))))
 
-(defmethod slash/handle-slash "daily" [request]
-  (handle-recurrent :daily request))
-
-(defmethod slash/handle-slash "weekly" [request]
-  (handle-recurrent :weekly request))
+(defmethod slash/handle-name "daily" [request] (handle-recurrent :daily request))
+(defmethod slash/handle-name "weekly" [request] (handle-recurrent :weekly request))

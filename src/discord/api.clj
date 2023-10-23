@@ -27,12 +27,12 @@
 (defn authorize [request]
   (assoc-in request [:headers "Authorization"] (str "Bot " config/token)))
 
-(defn post! [uri body]
-  (http/post (str root uri) (authorize {:form-params body :content-type :json})))
+(defn- http-json [http-fn uri body]
+  (http-fn (str root uri) (authorize {:form-params body :content-type :json})))
 
-(defn get! [uri]
-  (http/get (str root uri) (authorize {:as :json})))
-
+(defn post! [uri body] (http-json http/post uri body))
+(defn patch! [uri body] (http-json http/patch uri body))
+(defn get! [uri] (http/get (str root uri) (authorize {:as :json})))
 (defn delete! [uri] (http/delete (str root uri) (authorize nil)))
 
 (defn create-guild-slash-command!

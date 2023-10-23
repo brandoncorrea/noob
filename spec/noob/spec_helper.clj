@@ -10,6 +10,7 @@
   (redefs-around [discord-ws/status-update!      (stub :discord/status-update!)
                   interaction/reply!             (stub :discord/reply-interaction!)
                   interaction/reply-ephemeral!   (stub :discord/reply-interaction-ephemeral!)
+                  interaction/edit-original!     (stub :discord/edit-original!)
                   discord-rest/create-message!   (stub :discord/create-message!)
                   discord-rest/get-current-user! (stub :discord/get-current-user!)]))
 
@@ -28,3 +29,6 @@
 
 (defmacro should-have-replied-ephemeral [request message]
   `(should-have-invoked :discord/reply-interaction-ephemeral! {:with [~request ~message]}))
+
+(defmacro should-have-edited-message [request content]
+  `(should-have-invoked :discord/edit-original! {:with [~request ~content]}))

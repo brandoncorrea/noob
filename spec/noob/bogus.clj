@@ -36,14 +36,14 @@
 (def bill (entity :user))
 (def ted (entity :user))
 (defmethod -init-kind! :user [_]
-  (init-entity! bill (user/create! "bill-id"))
+  (init-entity! bill (db/tx (user/create "bill-id") :xp 100))
   (init-entity! ted (user/create! "ted-id")))
 
 (def stick (entity :product))
 (def propeller-hat (entity :product))
 (defmethod -init-kind! :product [_]
-  (init-entity! stick (product/create! "Stick" :main-hand :description "A sticky stick."))
-  (init-entity! propeller-hat (product/create! "Propeller Hat" :head)))
+  (init-entity! stick (product/create! "Stick" :main-hand 1 100 :description "A sticky stick." :attack 1))
+  (init-entity! propeller-hat (product/create! "Propeller Hat" :head 2 250 :perception 2)))
 
 (def deps
   ;; Add entities here with a list of entities they depend on (shallow).

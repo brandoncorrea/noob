@@ -23,7 +23,7 @@
 
 (defn- ->data [content]
   (if (string? content)
-    {:content content}
+    {:content content :components []}
     {:components [{:type 1 :components [(components/<-hiccup content)]}]}))
 
 (defn reply! [{:keys [id token]} content & flags]
@@ -35,3 +35,8 @@
 
 (defn reply-ephemeral! [payload content]
   (reply! payload content :ephemeral))
+
+(defn edit-original! [request content]
+  (let [{:keys [id channel-id]} (:message request)]
+    (when (and id channel-id content)
+      (api/patch! (str "/channels/" channel-id "/messages/" id) (->data content)))))
