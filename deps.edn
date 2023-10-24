@@ -6,8 +6,8 @@
              clj-http/clj-http                   {:mvn/version "3.12.3"}
              com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.543"} ; required for staging/production
              com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.543"}
-             com.cleancoders.c3kit/bucket        {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "8deb30d9572fe894620e1bcb5494b5ff8dafd5b6"}
-             com.datomic/peer                    {:mvn/version "1.0.6735"}
+             com.cleancoders.c3kit/bucket        {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "94f64bd178d15ea025027952bd66c9e9e8ba3b38"}
+             com.datomic/peer                    {:mvn/version "1.0.7021"}
              org.clojure/clojure                 {:mvn/version "1.11.1"}
              org.suskalo/discljord               {:mvn/version "1.3.0"}
              }

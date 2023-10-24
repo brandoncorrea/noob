@@ -90,9 +90,9 @@
         (slash/handle-name @request)
         (should-have-invoked :stolen-niblets {:with [2 0 1 0]})
         (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
-        (should-have-created-message @request (str (user/mention @bill) " pays a 20 Niblet fine!"))
-        (should= 120 (:niblets @ted))
-        (should= 80 (:niblets @bill))))
+        (should-have-created-message @request (str (user/mention @bill) " pays a 30 Niblet fine!"))
+        (should= 130 (:niblets @ted))
+        (should= 70 (:niblets @bill))))
 
     (it "a caught thief does not pay a negative fee"
       (with-redefs [roll/steal?         (constantly false)

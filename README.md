@@ -12,11 +12,13 @@ A Discord bot to empower the noob.
 
 ## Config
 
-Create `config.edn` in the same directory as `project.clj` with the following 
-structure and add your Discord bot's token:
+Create `.env` in the same directory as `deps.edn` with the following 
+structure and add your settings:
 
 ````clojure
-{:token "BOT_TOKEN"}
+DISCORD_TOKEN=<SECRET>
+DISCORD_APP_ID=<SECRET>
+DISCORD_DEV_GUILD=<SECRET>
 ````
 
 ## Database
