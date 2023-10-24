@@ -12,6 +12,7 @@
                   interaction/reply-ephemeral!   (stub :discord/reply-interaction-ephemeral!)
                   interaction/edit-original!     (stub :discord/edit-original!)
                   interaction/create-message!    (stub :discord/create-message!)
+                  interaction/embed!             (stub :discord/embed!)
                   discord-rest/get-current-user! (stub :discord/get-current-user!)]))
 
 (defn stub-bot []
@@ -35,3 +36,6 @@
 
 (defmacro should-have-created-message [request message]
   `(should-have-invoked :discord/create-message! {:with [~request ~message]}))
+
+(defmacro should-have-embedded [request embed]
+  `(should-have-invoked :discord/embed! {:with [~request ~embed]}))

@@ -9,13 +9,14 @@
             [noob.config :as config]
             [noob.events.core :as events]
             [noob.events.ready]
-            [noob.slash.steal]
             [noob.schema.full :as schema.full]
             [noob.slash.attack]
             [noob.slash.give]
             [noob.slash.love]
             [noob.slash.recurrent]
-            [noob.slash.shop]))
+            [noob.slash.shop]
+            [noob.slash.stats]
+            [noob.slash.steal]))
 
 (defn start-db [] (app/start! [db/service]))
 

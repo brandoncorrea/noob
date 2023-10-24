@@ -4,13 +4,14 @@
             [noob.roll :as roll]))
 
 (defn by-discord-id [id] (db/ffind-by :user :discord-id id))
-(def discord-user (comp :user :member))
-(def username (comp :username discord-user))
-(def discord-id (comp :id discord-user))
-(def current (comp by-discord-id discord-id))
+(defn discord-id [request] (-> request :member :user :id))
+(defn current [request] (-> request discord-id by-discord-id))
 (defn mention [user] (str "<@" (:discord-id user user) \>))
 (defn create [discord-id] {:kind :user :discord-id discord-id})
 (defn create! [discord-id] (db/tx (create discord-id)))
+(defn find-or-create [discord-id]
+  (or (by-discord-id discord-id)
+      (create discord-id)))
 
 (defn update-niblets [f user amount]
   (if (:niblets user)
@@ -66,4 +67,19 @@
       (withdraw-niblets (:price item))
       db/tx))
 
-(def find-or-create (some-fn by-discord-id create))
+(defn display-name [member-or-user]
+  (or (:nick member-or-user)
+      (:global-name member-or-user)
+      (-> member-or-user :user :global-name)))
+
+(defn avatar [member-or-user]
+  (let [user-id (or (:id member-or-user)
+                    (-> member-or-user :user :id))
+        avatar  (or (-> member-or-user :avatar)
+                    (-> member-or-user :user :avatar))]
+    (when (and user-id avatar)
+      (str "https://cdn.discordapp.com/avatars/" user-id "/" avatar ".png"))))
+
+(defn ->author [member-or-user]
+  {:name     (display-name member-or-user)
+   :icon_url (avatar member-or-user)})

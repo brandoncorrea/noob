@@ -1,4 +1,5 @@
-(ns noob.core)
+(ns noob.core
+  (:require [clojure.string :as str]))
 
 (defn ->hash-map [key-fn value-fn coll]
   (apply hash-map (mapcat (juxt key-fn value-fn) coll)))
@@ -11,3 +12,5 @@
 
 (defn niblet-term [amount]
   (str amount " Niblet" (when (not= 1 amount) "s")))
+
+(defn join-lines [& lines] (str/join "\n" lines))

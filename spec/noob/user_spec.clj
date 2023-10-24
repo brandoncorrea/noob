@@ -9,6 +9,21 @@
   (with-stubs)
   (bogus/with-kinds :all)
 
+  (it "avatar"
+    (let [avatar "https://cdn.discordapp.com/avatars/user-id/cat.png"]
+      (should= avatar (sut/avatar {:id "user-id" :avatar "cat"}))
+      (should= avatar (sut/avatar {:user {:id "user-id" :avatar "cat"}}))
+      (should= avatar (sut/avatar {:user {:id "user-id"} :avatar "cat"}))
+      (should= avatar (sut/avatar {:user {:id "user-id"} :avatar "cat"}))
+      (should-be-nil (sut/avatar {}))))
+
+  (it "display-name"
+    (let [name "billy"]
+      (should= name (sut/display-name {:nick "billy"}))
+      (should= name (sut/display-name {:global-name "billy"}))
+      (should= name (sut/display-name {:user {:global-name "billy"}}))
+      (should-be-nil (sut/display-name {}))))
+
   (it "level"
     (should= 1 (sut/level {}))
     (should= 1 (sut/level {:xp -1}))

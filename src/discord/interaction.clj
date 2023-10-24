@@ -26,15 +26,16 @@
     {:content content :components []}
     {:components [{:type 1 :components [(components/<-hiccup content)]}]}))
 
-(defn reply! [{:keys [id token]} content & flags]
-  (when (and id token content)
+(defn reply! [{:keys [id token]} content & {:keys [flags embed]}]
+  (when (and id token)
     (api/post! (str "/interactions/" id "/" token "/callback")
-               (cond-> {:type 4 :data (->data content)}
-                       (seq flags)
-                       (assoc-in [:data :flags] (->flag flags))))))
+               (cond-> {:type 4}
+                       content (assoc :data (->data content))
+                       (seq flags) (assoc-in [:data :flags] (->flag flags))
+                       embed (assoc-in [:data :embeds] [embed])))))
 
-(defn reply-ephemeral! [payload content]
-  (reply! payload content :ephemeral))
+(defn embed! [request embed] (reply! request nil :embed embed))
+(defn reply-ephemeral! [payload content] (reply! payload content :flags [:ephemeral]))
 
 (defn edit-original! [request content]
   (let [{:keys [id channel-id]} (:message request)]
