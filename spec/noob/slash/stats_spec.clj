@@ -59,7 +59,10 @@
     (it "User with loadout"
       (db/tx @stick :sneak 3)
       (db/tx @propeller-hat :defense 1 :sneak 1)
-      (db/tx @bill :loadout #{(:id @stick) (:id @propeller-hat)})
+      (-> @bill
+          (user/equip @stick)
+          (user/equip @propeller-hat)
+          db/tx)
       (slash/handle-name @request)
       (should-have-embedded @request
         {:title       "Stats"

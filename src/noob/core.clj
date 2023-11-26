@@ -14,3 +14,5 @@
   (str amount " Niblet" (when (not= 1 amount) "s")))
 
 (defn join-lines [& lines] (str/join "\n" lines))
+
+(defn some= [thing coll] (some #(= thing %) coll))

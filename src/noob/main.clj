@@ -8,6 +8,7 @@
             [noob.bot :as bot]
             [noob.config :as config]
             [noob.events.core :as events]
+            [noob.slash.inventory]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
             [noob.slash.attack]

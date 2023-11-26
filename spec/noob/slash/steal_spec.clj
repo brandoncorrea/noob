@@ -64,8 +64,8 @@
 
     (it "factors in sneak and perception when attempting to steal"
       (db/tx @stick :sneak 5)
-      (db/tx @bill :loadout #{(:id @stick)})
-      (db/tx @ted :loadout #{(:id @propeller-hat)})
+      (db/tx (user/equip @bill @stick))
+      (db/tx (user/equip @ted @propeller-hat))
       (with-redefs [roll/steal?         (stub :steal? {:return true})
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)

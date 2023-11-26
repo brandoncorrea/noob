@@ -24,7 +24,7 @@
 (defn- ->data [content]
   (if (string? content)
     {:content content :components []}
-    {:components [{:type 1 :components [(components/<-hiccup content)]}]}))
+    {:components [{:type 1 :components (components/hiccup->components content)}]}))
 
 (defn reply! [{:keys [id token]} content & {:keys [flags embed]}]
   (when (and id token)

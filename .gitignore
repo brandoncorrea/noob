@@ -11,3 +11,4 @@
 .env
 datomic-pro-1.0.6735
 .java-version
+/db

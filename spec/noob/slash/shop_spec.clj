@@ -4,14 +4,11 @@
             [noob.slash.core :as slash]
             [noob.slash.shop :as sut]
             [noob.spec-helper :as spec-helper :refer [should-have-edited-message should-have-replied should-have-replied-ephemeral]]
+            [noob.user :as user]
             [speclj.core :refer :all]))
 
-(defn ->request [{:keys [discord-id]} username]
-  {:data   {:name "shop"}
-   :member {:user {:id discord-id :username username}}})
-
-(def request)
-(def products)
+(declare request)
+(declare products)
 
 (describe "Shop"
   (with-stubs)
@@ -62,8 +59,7 @@
 
   (context "show menu"
     (with products (db/find :product))
-    (with request {:data   {:name "shop"}
-                   :member {:user {:id (:discord-id @bill) :username "Bill"}}})
+    (with request (spec-helper/->slash-request "shop" @bill))
 
     (it "no inventory"
       (run! db/delete @products)
@@ -71,7 +67,7 @@
       (should-have-replied @request "There are no items available to purchase."))
 
     (it "user owns all inventory"
-      (db/tx @bill :inventory (map :id @products))
+      (db/tx (reduce user/loot @bill @products))
       (slash/handle-name @request)
       (should-have-replied @request "There are no items available to purchase."))
 
@@ -81,7 +77,7 @@
       (should-have-replied @request (sut/->shop-menu [@propeller-hat])))
 
     (it "user owns one item"
-      (db/tx @bill :inventory [(:id @stick)])
+      (db/tx (user/loot @bill @stick))
       (slash/handle-name @request)
       (should-have-replied @request (sut/->shop-menu [@propeller-hat])))
 
@@ -92,9 +88,9 @@
     )
 
   (context "select item"
-    (with request {:data   {:values    [(str (:id @stick))]
-                            :custom-id "shop-menu"}
-                   :member {:user {:id (:discord-id @bill) :username "Bill"}}})
+    (with request (spec-helper/->slash-request "shop" @bill
+                    :data {:values    [(str (:id @stick))]
+                           :custom-id "shop-menu"}))
 
     (it "missing values"
       (let [request (update @request :data dissoc :values)]
@@ -118,15 +114,15 @@
         (db/delete @bill)
         (slash/handle-custom-id request)
         (should-have-replied-ephemeral request "Propeller Hat has been added to your inventory!")
-        (let [{:keys [inventory loadout niblets]} (db/ffind-by :user :discord-id bill-id)]
-          (should-contain (:id @propeller-hat) inventory)
-          (should-contain (:id @propeller-hat) loadout)
-          (should= 0 niblets))))
+        (let [user (db/ffind-by :user :discord-id bill-id)]
+          (should-contain (:id @propeller-hat) (user/inventory user))
+          (should-contain (:id @propeller-hat) (user/loadout user))
+          (should= 0 (:niblets user)))))
 
     (it "inadequate niblets"
       (slash/handle-custom-id @request)
       (should-have-replied-ephemeral @request "You do not have enough Niblets to purchase this item.")
-      (should-not-contain (:id @stick) (:inventory @bill)))
+      (should-not-contain (:id @stick) (user/inventory @bill)))
 
     (it "inadequate level"
       (db/tx @bill :xp 0 :niblets 500)
@@ -135,27 +131,31 @@
         (should-have-replied-ephemeral request "You need to be at least level 2 to purchase this item.")))
 
     (it "already owns item"
-      (db/tx @bill :inventory #{(:id @stick)})
+      (db/tx (user/loot @bill @stick))
       (slash/handle-custom-id @request)
       (should-have-replied-ephemeral @request "It looks like you already own a Stick."))
 
     (it "purchases item"
-      (db/tx @bill :xp 1000 :niblets 500 :loadout #{(:id @propeller-hat)})
+      (-> (assoc @bill :xp 1000 :niblets 500)
+          (user/equip @propeller-hat)
+          db/tx)
       (slash/handle-custom-id @request)
       (should-have-replied-ephemeral @request "Stick has been added to your inventory!")
-      (should-contain (:id @stick) (:inventory @bill))
+      (should-contain (:id @stick) (user/inventory @bill))
       (should= 400 (:niblets @bill))
-      (should-contain (:id @stick) (:loadout @bill)))
+      (should-contain (:id @stick) (user/loadout @bill)))
 
     (it "retains currently equipped items over newly purchased items"
       (db/tx @propeller-hat :slot :main-hand)
-      (db/tx @bill :xp 1000 :niblets 500 :loadout #{(:id @propeller-hat)})
+      (-> (assoc @bill :xp 1000 :niblets 500)
+          (user/equip @propeller-hat)
+          db/tx)
       (slash/handle-custom-id @request)
       (should-have-replied-ephemeral @request "Stick has been added to your inventory!")
-      (should-contain (:id @stick) (:inventory @bill))
+      (should-contain (:id @stick) (user/inventory @bill))
       (should= 400 (:niblets @bill))
-      (should-contain (:id @propeller-hat) (:loadout @bill))
-      (should-not-contain (:id @stick) (:loadout @bill)))
+      (should-contain (:id @propeller-hat) (user/loadout @bill))
+      (should-not-contain (:id @stick) (user/loadout @bill)))
 
     (it "removes item from parent message"
       (db/tx @bill :niblets 500)

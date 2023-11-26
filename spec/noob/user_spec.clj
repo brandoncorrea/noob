@@ -1,7 +1,9 @@
 (ns noob.user-spec
-  (:require [c3kit.bucket.api :as db]
+  (:require [c3kit.apron.utilc :as utilc]
+            [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
             [noob.roll :as roll]
+            [noob.user :as user]
             [noob.user :as sut]
             [speclj.core :refer :all]))
 
@@ -68,23 +70,29 @@
       (should-have-invoked :ability-roll {:with [2 0]}))
 
     (it "attack with stick"
-      (db/tx @bill :loadout #{(:id @stick)})
+      (db/tx (user/equip @bill @stick))
       (sut/roll @bill :attack)
       (should-have-invoked :ability-roll {:with [2 1]}))
 
     (it "perception with hat"
-      (db/tx @ted :loadout #{(:id @propeller-hat)})
+      (db/tx (user/equip @ted @propeller-hat))
       (sut/roll @ted :perception)
       (should-have-invoked :ability-roll {:with [1 2]}))
 
     (it "multiple items containing different attributes"
-      (db/tx @ted :loadout #{(:id @propeller-hat) (:id @stick)})
+      (-> @ted
+          (user/equip @propeller-hat)
+          (user/equip @stick)
+          db/tx)
       (sut/roll @ted :perception)
       (should-have-invoked :ability-roll {:with [1 2]}))
 
     (it "multiple items containing the same attribute"
       (db/tx @stick :perception 5)
-      (db/tx @ted :loadout #{(:id @propeller-hat) (:id @stick)})
+      (-> @ted
+          (user/equip @stick)
+          (user/equip @propeller-hat)
+          db/tx)
       (sut/roll @ted :perception)
       (should-have-invoked :ability-roll {:with [1 7]}))
     )

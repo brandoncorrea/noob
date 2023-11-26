@@ -11,12 +11,17 @@
               :migration-ns 'noob.migrations
               :full-schema  'noob.schema.full/full-schema})
 
+(def sqlite3 {:impl    :jdbc
+              :dialect :sqlite3
+              :dbtype  "sqlite"
+              :dbname  "db/noob.db"})
+
 (def environment (env/env "ENVIRONMENT"))
 (def local? (= "local" environment))
 
 (def env
   {:discord discord
-   :bucket  datomic})
+   :bucket  sqlite3})
 
 (def bucket (:bucket env))
 (def dev-guild (-> env :discord :dev-guild))

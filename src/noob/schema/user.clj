@@ -7,8 +7,8 @@
    :discord-id {:type :string :db [:unique-value]}
    :xp         {:type :long}
    :niblets    {:type :long}
-   :inventory  {:type [:ref]}
-   :loadout    {:type [:ref]}
+   :inventory  {:type :string}
+   :loadout    {:type :string}
    })
 
 (def all [user])

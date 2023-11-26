@@ -1,5 +1,6 @@
 (ns noob.slash.shop
   (:require [c3kit.apron.schema :as schema]
+            [c3kit.apron.utilc :as utilc]
             [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
             [noob.product :as product]
@@ -22,7 +23,7 @@
   (into menu-root (map ->option) products))
 
 (defn ->shop-response [user]
-  (let [owner? (comp (-> user :inventory set) :id)]
+  (let [owner? (comp (-> user user/inventory set) :id)]
     (if-let [products (->> (db/find-by :product :level ['<= (user/level user)])
                            (remove owner?)
                            seq)]

@@ -15,6 +15,7 @@
    ["give" "Give some niblets to that special someone"
     [(option/->user! "recipient" "The recipient of your handout")
      (option/->int! "amount" "The number of niblets to bestow")]]
+   ["inventory" "See your inventory!"]
    ["love" "Love another player ❤️"
     [(option/->user! "beloved" "That special someone 🫶")]]
    ["shop" "Get in, loser. We're going shopping!"]

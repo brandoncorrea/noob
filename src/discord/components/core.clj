@@ -9,3 +9,8 @@
             [discord.components.select]))
 
 (defn <-hiccup [hiccup] (hiccup/<-hiccup hiccup))
+
+(defn hiccup->components [hiccup]
+  (if (= :<> (first hiccup))
+    (mapv <-hiccup (rest hiccup))
+    [(<-hiccup hiccup)]))

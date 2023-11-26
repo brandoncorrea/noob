@@ -25,8 +25,8 @@
 (defn stub-now [time]
   (redefs-around [time/now (stub :now {:return time})]))
 
-(defmacro should-have-replied [request message]
-  `(should-have-invoked :discord/reply-interaction! {:with [~request ~message]}))
+(defmacro should-have-replied [request & messages]
+  `(should-have-invoked :discord/reply-interaction! {:with [~request ~@messages]}))
 
 (defmacro should-have-replied-ephemeral [request message]
   `(should-have-invoked :discord/reply-interaction-ephemeral! {:with [~request ~message]}))
@@ -39,3 +39,16 @@
 
 (defmacro should-have-embedded [request embed]
   `(should-have-invoked :discord/embed! {:with [~request ~embed]}))
+
+(declare rec-merge)
+(defn deep-merge [v & vs] (reduce rec-merge v vs))
+(defn- rec-merge [v1 v2]
+  (if (and (map? v1) (map? v2))
+    (merge-with deep-merge v1 v2)
+    (or v2 v1)))
+
+(defn ->slash-request [command user & {:as options}]
+  (deep-merge
+    {:data   {:name command}
+     :member {:user {:id (:discord-id user)}}}
+    options))

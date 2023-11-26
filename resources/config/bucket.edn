@@ -1,1 +1,2 @@
-{:config-var noob.config/bucket}
+{:config-var  noob.config/bucket
+ :full-schema noob.schema.full/full-schema}

@@ -1,7 +1,6 @@
 (ns noob.slash.stats
   (:require [c3kit.apron.corec :as ccc]
             [c3kit.bucket.api :as db]
-            [clojure.string :as str]
             [discord.interaction :as interaction]
             [noob.core :as core]
             [noob.slash.core :as slash]
@@ -12,7 +11,7 @@
   (reduce + (ccc/map-some attr loadout)))
 
 (defn describe [user]
-  (let [loadout (map db/entity (:loadout user))]
+  (let [loadout (map db/entity (user/loadout user))]
     (core/join-lines
       (str "Niblets: " (:niblets user 0))
       (str "Level: " (user/level user))

@@ -1,5 +1,6 @@
 (ns noob.user
   (:require [c3kit.apron.corec :as ccc]
+            [c3kit.apron.utilc :as utilc]
             [c3kit.bucket.api :as db]
             [noob.roll :as roll]))
 
@@ -12,6 +13,9 @@
 (defn find-or-create [discord-id]
   (or (by-discord-id discord-id)
       (create discord-id)))
+
+(defn inventory [user] (-> user :inventory utilc/<-edn))
+(defn loadout [user] (-> user :loadout utilc/<-edn))
 
 (defn update-niblets [f user amount]
   (if (:niblets user)
@@ -39,14 +43,15 @@
     10))
 
 (defn niblets [user] (:niblets user 0))
-(defn owns? [user item] (some (partial = (:id item)) (:inventory user)))
+(defn owns? [user item] (some (partial = (:id item)) (inventory user)))
 (defn unslotted? [user slot]
-  (not-any? #(-> % db/entity :slot (= slot)) (:loadout user)))
+  (not-any? #(-> % db/entity :slot (= slot)) (loadout user)))
 
-(defn equip [user item] (update user :loadout conj (:id item)))
+(defn equip [user item]
+  (assoc user :loadout (utilc/->edn (conj (loadout user) (:id item)))))
 
 (defn ability-score [user ability]
-  (->> (:loadout user)
+  (->> (loadout user)
        (ccc/map-some (comp ability db/entity))
        (reduce +)))
 
@@ -61,9 +66,12 @@
 (defn gain-xp! [user base-factor challenge-level]
   (db/tx (gain-xp user base-factor challenge-level)))
 
+(defn loot [user item]
+  (assoc user :inventory (utilc/->edn (conj (inventory user) (:id item)))))
+
 (defn purchase! [user item]
   (-> user
-      (update :inventory conj (:id item))
+      (loot item)
       (withdraw-niblets (:price item))
       db/tx))
 
