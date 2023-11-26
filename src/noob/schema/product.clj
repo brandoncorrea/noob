@@ -1,11 +1,12 @@
 (ns noob.schema.product
-  (:require [c3kit.apron.schema :as s]))
+  (:require [c3kit.apron.schema :as s]
+            [noob.core :as core]))
 
 (def slots #{:main-hand :off-hand :head :torso :legs :hands :feet :back})
 
 (def product
   {:kind        (s/kind :product)
-   :id          s/id
+   :id          core/auto-int-id-type
    :slot        {:type :keyword}
    :name        {:type :string}
    :description {:type :string}

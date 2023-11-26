@@ -1,9 +1,10 @@
 (ns noob.schema.user
-  (:require [c3kit.apron.schema :as s]))
+  (:require [c3kit.apron.schema :as s]
+            [noob.core :as core]))
 
 (def user
   {:kind       (s/kind :user)
-   :id         s/id
+   :id         core/auto-int-id-type
    :discord-id {:type :string :db [:unique-value]}
    :xp         {:type :long}
    :niblets    {:type :long}

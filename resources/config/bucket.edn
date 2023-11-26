@@ -1,2 +1,4 @@
-{:config-var  noob.config/bucket
- :full-schema noob.schema.full/full-schema}
+{:config-var   noob.config/bucket
+ :full-schema  noob.schema.full/full-schema
+ :migration-ns noob.migrations
+ }

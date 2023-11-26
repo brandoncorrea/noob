@@ -6,7 +6,7 @@
              clj-http/clj-http                 {:mvn/version "3.12.3"}
              ;com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.543"} ; required for staging/production
              ;com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.543"}
-             com.cleancoders.c3kit/bucket      {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "ca3038af2ce516e464575ee17bace47b86d3ed48"}
+             com.cleancoders.c3kit/bucket      {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "1f5509a6e47b84597783e6a4526f3f0e4a6d6bb2"}
              com.github.seancorfield/next.jdbc {:mvn/version "1.2.761"}
              org.xerial/sqlite-jdbc            {:mvn/version "3.43.2.2"}
              com.mchange/c3p0                  {:mvn/version "0.9.5.5"}

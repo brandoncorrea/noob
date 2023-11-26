@@ -1,5 +1,12 @@
 (ns noob.core
-  (:require [clojure.string :as str]))
+  (:require [c3kit.apron.schema :as s]
+            [c3kit.bucket.jdbc :as jdbc]
+            [c3kit.bucket.sqlite3]
+            [clojure.string :as str]
+            [noob.config :as config]))
+
+(def auto-int-id-type
+  (assoc-in s/id [:db :type] (jdbc/auto-int-primary-key (:dialect config/bucket))))
 
 (defn ->hash-map [key-fn value-fn coll]
   (apply hash-map (mapcat (juxt key-fn value-fn) coll)))
