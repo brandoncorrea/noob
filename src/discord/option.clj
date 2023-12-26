@@ -26,3 +26,27 @@
 (def ->attachment! (partial create true 11))
 
 (defn get-option [request key] (get-in request [:data :options key]))
+
+(def ->option-type
+  {:string      3
+   :int         4
+   :long        4
+   :bool        5
+   :boolean     5
+   :user        6
+   :channel     7
+   :role        8
+   :mentionable 9
+   :double      10
+   :float       10
+   :attachment  11})
+
+(defn schema->option-spec [k type api]
+  (-> (merge {:type type :name k :required false} api)
+      (update :type ->option-type)
+      (update :required boolean)
+      (update :name name)))
+
+(defn <-spec [k {:keys [type api]}]
+  (let [{:keys [required type name description]} (schema->option-spec k type api)]
+    (create required type name description)))

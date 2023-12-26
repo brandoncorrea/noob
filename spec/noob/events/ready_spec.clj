@@ -4,7 +4,7 @@
             [noob.config :as config]
             [noob.events.core :as events]
             [noob.events.ready]
-            [noob.slash.core :as slash]
+            [noob.slash.schema.full :as slash-schema]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]))
 
@@ -17,7 +17,7 @@
                   discord-api/create-guild-slash-command!  (stub :create-guild-command!)
                   discord-ws/create-activity               hash-map
                   config/dev-guild                         456
-                  slash/dev-commands                       [["shop" "Get in, loser. We're going shopping!"]]
+                  slash-schema/dev-commands                [{:type 1 :name "shop" :description "Get in, loser. We're going shopping!"}]
                   discord-api/get-global-commands          (constantly [{:name "global-command" :id 123 :type 1}])
                   discord-api/get-guild-commands           {456 [{:name "guild-command" :id 789 :type 1}]}
                   discord-api/delete-guild-slash-command!  (stub :delete-guild-slash-command!)
@@ -30,7 +30,10 @@
   (it "synchronizes dev slash commands"
     (events/handle-event :ready nil)
     (should-have-invoked :delete-guild-slash-command! {:with [456 789]})
-    (should-have-invoked :create-guild-command! {:with [456 "shop" "Get in, loser. We're going shopping!" nil]}))
+    (should-have-invoked :create-guild-command! {:with [456
+                                                        {:name        "shop"
+                                                         :type        1
+                                                         :description "Get in, loser. We're going shopping!"}]}))
 
   (context "global synchronization"
 
@@ -38,30 +41,16 @@
       (with-redefs [discord-api/get-global-commands (constantly [{:name "global-command" :id 123 :type 1}])]
         (events/handle-event :ready nil)
         (should-have-invoked :delete-global-slash-command! {:with [123]})
-        (should-have-invoked :create-global-command! {:with ["daily" "Redeem your daily Niblets!" nil]})))
+        (should-have-invoked :create-global-command! {:with [{:name "daily" :type 1 :description "Redeem your daily Niblets!"}]})))
 
     (it "command already exists"
-      (with-redefs [discord-api/get-global-commands (constantly
-                                                      (mapv (fn [[name description options]]
-                                                              {:id          123
-                                                               :name        name
-                                                               :type        1
-                                                               :description description
-                                                               :options     options})
-                                                            slash/global-commands))]
+      (with-redefs [discord-api/get-global-commands (constantly slash-schema/prod-commands)]
         (events/handle-event :ready nil)
         (should-not-have-invoked :delete-global-slash-command!)
         (should-not-have-invoked :create-global-command!)))
 
     (it "command exists, but not as a slash command"
-      (with-redefs [discord-api/get-global-commands (constantly
-                                                      (mapv (fn [[name description options]]
-                                                              {:id          123
-                                                               :type        2
-                                                               :name        name
-                                                               :description description
-                                                               :options     options})
-                                                            slash/global-commands))]
+      (with-redefs [discord-api/get-global-commands (constantly (map #(assoc % :type 2) slash-schema/prod-commands))]
         (events/handle-event :ready nil)
         (should-have-invoked :delete-global-slash-command!)
         (should-have-invoked :create-global-command!)))

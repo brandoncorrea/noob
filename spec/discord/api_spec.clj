@@ -15,25 +15,25 @@
 
   (context "create-application-slash-command!"
     (it "missing name"
-      (sut/create-global-slash-command! nil "my command")
+      (sut/create-global-slash-command! {:description "my command"})
       (should-not-have-invoked :post))
 
     (it "missing description"
-      (sut/create-global-slash-command! "hello")
+      (sut/create-global-slash-command! {:name "hello"})
       (should-have-invoked :post {:with ["https://discord.com/api/v10/applications/app-id/commands"
                                          {:form-params  {:name "hello" :type 1}
                                           :content-type :json
                                           :headers      {"Authorization" "Bot bot-token"}}]}))
 
     (it "empty options"
-      (sut/create-global-slash-command! "hello" "world" [])
+      (sut/create-global-slash-command! {:name "hello" :description "world" :options []})
       (should-have-invoked :post {:with ["https://discord.com/api/v10/applications/app-id/commands"
                                          {:form-params  {:name "hello" :description "world" :options [] :type 1}
                                           :content-type :json
                                           :headers      {"Authorization" "Bot bot-token"}}]}))
 
     (it "one option"
-      (sut/create-global-slash-command! "hello" "world" [{:some :opt}])
+      (sut/create-global-slash-command! {:name "hello" :description "world" :options [{:some :opt}]})
       (should-have-invoked :post {:with ["https://discord.com/api/v10/applications/app-id/commands"
                                          {:form-params  {:name "hello" :description "world" :options [{:some :opt}] :type 1}
                                           :content-type :json
