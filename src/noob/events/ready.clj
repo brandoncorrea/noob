@@ -2,7 +2,7 @@
   (:require [discljord.connections :as discord-ws]
             [discord.api :as api]
             [discord.api]
-            [noob.bot :as bot]
+            [discord.bot :as bot]
             [noob.config :as config]
             [noob.events.core :as events]
             [noob.slash.core :as slash]))

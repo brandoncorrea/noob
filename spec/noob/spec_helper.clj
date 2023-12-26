@@ -2,8 +2,9 @@
   (:require [c3kit.apron.time :as time]
             [discljord.connections :as discord-ws]
             [discljord.messaging :as discord-rest]
+            [discord.bot :as bot]
             [discord.interaction :as interaction]
-            [noob.bot :as bot]
+            [discord.thread :as thread]
             [speclj.core :refer :all]))
 
 (defn stub-discord []
@@ -18,9 +19,7 @@
 (defn stub-bot []
   (redefs-around [bot/gateway         (constantly :bot/gateway)
                   bot/events          (constantly :bot/events)
-                  bot/rest-connection (constantly :bot/rest)
-                  bot/init!           (stub :bot/init!)
-                  bot/stop!           (stub :bot/stop!)]))
+                  bot/rest-connection (constantly :bot/rest)]))
 
 (defn stub-now [time]
   (redefs-around [time/now (stub :now {:return time})]))
@@ -52,3 +51,8 @@
     {:data   {:name command}
      :member {:user {:id (:discord-id user)}}}
     options))
+
+(defn stub-thread []
+  (redefs-around [thread/->Thread  (stub :thread/->Thread {:invoke (fn [task] {:task task})})
+                  thread/start     (stub :thread/start)
+                  thread/interrupt (stub :thread/interrupt)]))

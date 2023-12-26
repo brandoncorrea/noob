@@ -1,9 +1,7 @@
 (ns noob.main-spec
   (:require [c3kit.apron.app :as app]
             [c3kit.bucket.api :as db]
-            [discljord.events :as discord-events]
-            [noob.config :as config]
-            [noob.events.core :as events]
+            [discord.bot :as discord-bot]
             [noob.main :as sut]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]))
@@ -13,12 +11,12 @@
   (spec-helper/stub-bot)
 
   (it "initializes with bot token"
-    (with-redefs [discord-events/message-pump! (stub :discord/message-pump!)
-                  app/start!                   (stub :app/start!)
-                  sut/wrap-error               identity]
+    (with-redefs [app/start!             (stub :app/start!)
+                  shutdown-agents        (stub :shutdown-agents)
+                  sut/add-shutdown-hook! (stub :add-shutdown-hook!)]
       (sut/-main)
-      (should-have-invoked :app/start! {:with [[db/service]]})
-      (should-have-invoked :bot/init! {:with [config/token]})
-      (should-have-invoked :discord/message-pump! {:with [:bot/events events/handle-event]})
-      (should-have-invoked :bot/stop!)))
+      (should-have-invoked :app/start! {:with [[db/service discord-bot/service]]})
+      (should-have-invoked :add-shutdown-hook! {:with [sut/stop-all]})
+      (should-have-invoked :add-shutdown-hook! {:with [shutdown-agents]})))
+
   )
