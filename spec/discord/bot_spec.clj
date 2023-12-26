@@ -24,6 +24,16 @@
     (sut/configure! :foo :bar :baz :buzz)
     (should= @sut/config {:foo :bar :baz :buzz}))
 
+  (context "pump-messages"
+    (it "ignores interrupt exceptions"
+      (with-redefs [discord-events/message-pump! (fn [_ _] (throw (InterruptedException.)))]
+        (should-not-throw (sut/pump-messages! nil nil))))
+
+    (it "throws all other exceptions"
+      (with-redefs [discord-events/message-pump! (fn [_ _] (throw (Exception.)))]
+        (should-throw (sut/pump-messages! nil nil))))
+    )
+
   (context "start-service"
 
     (redefs-around [discord-rest/start-connection! (stub :start-connection! {:return :rest-connection})

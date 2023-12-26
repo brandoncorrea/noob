@@ -19,9 +19,15 @@
 (defn fetch-id [rest]
   (-> rest discord-rest/get-current-user! deref :id))
 
+(defn pump-messages! [chan handler]
+  (try
+    (discord-events/message-pump! chan handler)
+    (catch InterruptedException _
+      (log/debug "Message Pump Interrupted"))))
+
 (defn ->message-task [event-handler chan]
   (when event-handler
-    (let [handler #(discord-events/message-pump! chan event-handler)
+    (let [handler #(pump-messages! chan event-handler)
           thread  (thread/->Thread handler)]
       (thread/start thread)
       thread)))
