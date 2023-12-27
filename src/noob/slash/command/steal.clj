@@ -58,7 +58,7 @@
 
 (defmethod slash/handle-command "steal" [request]
   (let [thief-id  (user/discord-id request)
-        victim-id (get-in request [:data :options "victim"])]
+        victim-id (get-in request [:data :options :victim])]
     (if (= thief-id victim-id)
       (interaction/reply! request (format (rand-nth self-messages) (user/mention thief-id)))
       (attempt-steal! request thief-id victim-id))))

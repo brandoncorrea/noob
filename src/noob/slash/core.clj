@@ -19,7 +19,7 @@
   (let [options (-> request :data :options)]
     (cond-> request
             options
-            (assoc-in [:data :options] (core/->hash-map :name :value options)))))
+            (assoc-in [:data :options] (core/->hash-map (comp keyword :name) :value options)))))
 
 ;; TODO [BAC]: Simplify the interface between here and handle-name & handle-custom-id
 

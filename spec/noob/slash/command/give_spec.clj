@@ -10,8 +10,8 @@
 
 (defn ->give-request [sender recipient amount]
   {:data   {:name    "give"
-            :options {"recipient" (:discord-id recipient)
-                      "amount"    amount}}
+            :options {:recipient (:discord-id recipient)
+                      :amount    amount}}
    :member {:user {:id (:discord-id sender)}}})
 
 (describe "Give Command"

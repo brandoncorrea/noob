@@ -10,9 +10,9 @@
   (interaction/reply! request (str (user/mention from) " gave " (user/mention to) " " (core/niblet-term amount) "!")))
 
 (defmethod slash/handle-command "give" [request]
-  (let [amount    (option/get-option request "amount")
+  (let [amount    (option/get-option request :amount)
         sender    (delay (user/current request))
-        recipient (delay (user/find-or-create (option/get-option request "recipient")))]
+        recipient (delay (user/find-or-create (option/get-option request :recipient)))]
     (cond
       (neg? amount) (interaction/reply-ephemeral! request "Are you trying to /steal Niblets?")
       (zero? amount) (interaction/reply-ephemeral! request "How many Niblets do you want to give?")

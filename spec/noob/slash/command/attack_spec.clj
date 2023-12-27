@@ -21,11 +21,11 @@
 
   (context "attacking people"
 
-    (with request {:data   {:name "attack" :options {"target" (:discord-id @ted)}}
+    (with request {:data   {:name "attack" :options {:target (:discord-id @ted)}}
                    :member {:user {:id (:discord-id @bill)}}})
 
     (it "attacks self"
-      (let [request (assoc-in @request [:data :options "target"] (:discord-id @bill))]
+      (let [request (assoc-in @request [:data :options :target] (:discord-id @bill))]
         (slash/handle-command request)
         (should-have-replied request (str (user/mention @bill) " attacks themselves"))))
 

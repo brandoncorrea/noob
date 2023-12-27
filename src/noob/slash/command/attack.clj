@@ -74,7 +74,7 @@
 
 (defmethod slash/handle-command "attack" [request]
   (let [attacker-id (user/discord-id request)
-        target-id   (get-in request [:data :options "target"])]
+        target-id   (-> request :data :options :target)]
     (if (= attacker-id target-id)
       (interaction/reply! request (format (rand-nth self-messages) (user/mention attacker-id)))
       (fight! request attacker-id target-id))))

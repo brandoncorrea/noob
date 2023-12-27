@@ -21,11 +21,11 @@
 
   (context "stealing niblets"
 
-    (with request {:data   {:name "steal" :options {"victim" (:discord-id @ted)}}
+    (with request {:data   {:name "steal" :options {:victim (:discord-id @ted)}}
                    :member {:user {:id (:discord-id @bill)}}})
 
     (it "steals from self"
-      (let [request (assoc-in @request [:data :options "victim"] (:discord-id @bill))]
+      (let [request (assoc-in @request [:data :options :victim] (:discord-id @bill))]
         (slash/handle-command request)
         (should-have-replied request (str (user/mention @bill) " steals from themselves"))))
 

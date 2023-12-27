@@ -57,5 +57,5 @@
 
 (defmethod slash/handle-command "love" [request]
   (let [lover   (user/mention (user/discord-id request))
-        beloved (user/mention (get-in request [:data :options "beloved"]))]
+        beloved (user/mention (get-in request [:data :options :beloved]))]
     (interaction/reply! request (create-message lover beloved))))
