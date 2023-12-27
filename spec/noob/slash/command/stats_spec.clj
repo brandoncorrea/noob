@@ -1,9 +1,9 @@
-(ns noob.slash.stats-spec
+(ns noob.slash.command.stats-spec
   (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick]]
             [noob.core :as core]
             [noob.slash.core :as slash]
-            [noob.slash.stats]
+            [noob.slash.command.stats]
             [noob.spec-helper :as spec-helper :refer [should-have-embedded]]
             [noob.style.core :as style]
             [noob.user :as user]
@@ -25,7 +25,7 @@
 
     (it "user does not exist"
       (db/delete @bill)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (should-have-embedded @request
         {:title       "Stats"
          :description (core/join-lines
@@ -41,7 +41,7 @@
                        :icon_url (user/avatar (:member @request))}}))
 
     (it "User with no loadout"
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (should-have-embedded @request
         {:title       "Stats"
          :description (core/join-lines
@@ -63,7 +63,7 @@
           (user/equip @stick)
           (user/equip @propeller-hat)
           db/tx)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (should-have-embedded @request
         {:title       "Stats"
          :description (core/join-lines
@@ -80,7 +80,7 @@
 
     (it "with niblets"
       (db/tx @bill :niblets 12)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (should-have-embedded @request
         {:title       "Stats"
          :description (core/join-lines
@@ -97,7 +97,7 @@
 
     (it "with xp"
       (db/tx @bill :xp 400)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (should-have-embedded @request
         {:title       "Stats"
          :description (core/join-lines

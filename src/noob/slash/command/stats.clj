@@ -1,4 +1,4 @@
-(ns noob.slash.stats
+(ns noob.slash.command.stats
   (:require [c3kit.apron.corec :as ccc]
             [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
@@ -21,7 +21,7 @@
       (str "🥷 Stealth: " (ability-score :sneak loadout))
       (str "👁 Perception: " (ability-score :perception loadout)))))
 
-(defmethod slash/handle-name "stats" [request]
+(defmethod slash/handle-command "stats" [request]
   (let [user   (user/current request)
         member (:member request)]
     (interaction/embed! request

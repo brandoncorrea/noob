@@ -1,4 +1,4 @@
-(ns noob.slash.schema.love
+(ns noob.slash.command.schema.love
   (:require [c3kit.apron.schema :as schema]))
 
 (def schema

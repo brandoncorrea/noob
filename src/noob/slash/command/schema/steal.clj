@@ -1,4 +1,4 @@
-(ns noob.slash.schema.steal
+(ns noob.slash.command.schema.steal
   (:require [c3kit.apron.schema :as schema]))
 
 (def schema

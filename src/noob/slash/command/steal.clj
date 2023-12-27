@@ -1,4 +1,4 @@
-(ns noob.slash.steal
+(ns noob.slash.command.steal
   (:require [discord.interaction :as interaction]
             [noob.roll :as roll]
             [noob.slash.core :as slash]
@@ -56,8 +56,8 @@
       (steal! request thief victim)
       (fail! request thief victim))))
 
-(defmethod slash/handle-name "steal" [request]
-  (let [thief-id  (-> request :member :user :id)
+(defmethod slash/handle-command "steal" [request]
+  (let [thief-id  (user/discord-id request)
         victim-id (get-in request [:data :options "victim"])]
     (if (= thief-id victim-id)
       (interaction/reply! request (format (rand-nth self-messages) (user/mention thief-id)))

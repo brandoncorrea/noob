@@ -4,7 +4,7 @@
             [noob.config :as config]
             [noob.events.core :as events]
             [noob.events.ready]
-            [noob.slash.schema.full :as slash-schema]
+            [noob.slash.command.schema.full :as slash-schema]
             [noob.spec-helper :as spec-helper]
             [speclj.core :refer :all]))
 

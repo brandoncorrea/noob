@@ -1,8 +1,8 @@
-(ns noob.slash.love-spec
+(ns noob.slash.command.love-spec
   (:require [noob.bogus :as bogus]
             [noob.bogus :refer [bill ted]]
             [noob.slash.core :as slash]
-            [noob.slash.love :as sut]
+            [noob.slash.command.love :as sut]
             [noob.spec-helper :as spec-helper :refer [should-have-replied]]
             [noob.user :as user]
             [speclj.core :refer :all]))
@@ -23,14 +23,14 @@
 
     (it "loves another"
       (with-redefs [sut/others-messages ["%1$s loves %2$s"]]
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied @request (str (user/mention @bill) " loves " (user/mention @ted)))
         (should-have-invoked :rand-nth {:with [sut/others-messages]})))
 
     (it "loves self"
       (with-redefs [sut/self-messages ["%s loves themselves"]]
         (let [request (assoc-in @request [:data :options "beloved"] (:discord-id @bill))]
-          (slash/handle-name request)
+          (slash/handle-command request)
           (should-have-replied request (str (user/mention @bill) " loves themselves"))
           (should-have-invoked :rand-nth {:with [sut/self-messages]}))))
 

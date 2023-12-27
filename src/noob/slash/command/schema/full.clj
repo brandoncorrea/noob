@@ -1,10 +1,10 @@
-(ns noob.slash.schema.full
+(ns noob.slash.command.schema.full
   (:require [c3kit.apron.corec :as ccc]
             [discord.option :as option]
-            [noob.slash.schema.attack :as attack]
-            [noob.slash.schema.give :as give]
-            [noob.slash.schema.love :as love]
-            [noob.slash.schema.steal :as steal]))
+            [noob.slash.command.schema.attack :as attack]
+            [noob.slash.command.schema.give :as give]
+            [noob.slash.command.schema.love :as love]
+            [noob.slash.command.schema.steal :as steal]))
 
 (def daily {:name "daily" :description "Redeem your daily Niblets!"})
 (def inventory {:name "inventory" :description "See your inventory!"})

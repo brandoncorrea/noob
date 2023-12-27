@@ -1,9 +1,9 @@
-(ns noob.slash.steal-spec
+(ns noob.slash.command.steal-spec
   (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
             [noob.roll :as roll]
+            [noob.slash.command.steal :as sut]
             [noob.slash.core :as slash]
-            [noob.slash.steal :as sut]
             [noob.spec-helper :as spec-helper :refer [should-have-created-message should-have-replied should-have-replied-ephemeral]]
             [noob.user :as user]
             [speclj.core :refer :all]))
@@ -26,19 +26,19 @@
 
     (it "steals from self"
       (let [request (assoc-in @request [:data :options "victim"] (:discord-id @bill))]
-        (slash/handle-name request)
+        (slash/handle-command request)
         (should-have-replied request (str (user/mention @bill) " steals from themselves"))))
 
     (it "steals from user with no Niblets"
       (with-redefs [roll/steal? (constantly true)]
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied-ephemeral @request "There are no Niblets to steal :(")))
 
     (it "steals niblets from a user"
       (with-redefs [roll/steal?         (constantly true)
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied-ephemeral @request "You stole 10 Niblets 😈")
         (should-have-invoked :stolen-niblets {:with [2 0 1 0]})
         (should= 90 (:niblets @ted))
@@ -48,7 +48,7 @@
       (with-redefs [roll/steal?         (constantly true)
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 1)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied-ephemeral @request "You stole 1 Niblets 😈")
         (should= 0 (:niblets @ted))
         (should= 1 (:niblets @bill))))
@@ -57,7 +57,7 @@
       (with-redefs [roll/steal?         (constantly true)
                     roll/stolen-niblets (stub :stolen-niblets {:return -10})]
         (db/tx @ted :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied-ephemeral @request "You almost succeeded")
         (should= 100 (:niblets @ted))
         (should-be-nil (:niblets @bill))))
@@ -69,7 +69,7 @@
       (with-redefs [roll/steal?         (stub :steal? {:return true})
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-invoked :steal? {:with [2 5 1 2]})
         (should-have-invoked :stolen-niblets {:with [2 5 1 2]})))
 
@@ -77,7 +77,7 @@
       (with-redefs [roll/steal?         (constantly false)
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
         (should= 100 (:niblets @ted))
         (should-be-nil (:niblets @bill))))
@@ -87,7 +87,7 @@
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)
         (db/tx @bill :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-invoked :stolen-niblets {:with [2 0 1 0]})
         (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
         (should-have-created-message @request (str (user/mention @bill) " pays a 30 Niblet fine!"))
@@ -99,7 +99,7 @@
                     roll/stolen-niblets (stub :stolen-niblets {:return -10})]
         (db/tx @ted :niblets 100)
         (db/tx @bill :niblets 100)
-        (slash/handle-name @request)
+        (slash/handle-command @request)
         (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
         (should-not-have-invoked :discord/create-message!)
         (should= 100 (:niblets @ted))

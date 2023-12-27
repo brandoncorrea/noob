@@ -1,4 +1,4 @@
-(ns noob.slash.give
+(ns noob.slash.command.give
   (:require [discord.interaction :as interaction]
             [discord.option :as option]
             [noob.core :as core]
@@ -9,7 +9,7 @@
   (user/transfer-niblets! from to amount)
   (interaction/reply! request (str (user/mention from) " gave " (user/mention to) " " (core/niblet-term amount) "!")))
 
-(defmethod slash/handle-name "give" [request]
+(defmethod slash/handle-command "give" [request]
   (let [amount    (option/get-option request "amount")
         sender    (delay (user/current request))
         recipient (delay (user/find-or-create (option/get-option request "recipient")))]

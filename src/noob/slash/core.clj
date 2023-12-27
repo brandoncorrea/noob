@@ -6,14 +6,14 @@
 (def slash-name (comp :name :data))
 (def custom-id (comp :custom-id :data))
 
-(defmulti handle-name slash-name)
-(defmulti handle-custom-id custom-id)
+(defmulti handle-command slash-name)
+(defmulti handle-action custom-id)
 
 (defn maybe-debug [key-fn label request]
   (when-let [name (key-fn request)]
     (log/debug (str "Unhandled slash " label ": " name " " (pr-str request)))))
-(defmethod handle-name :default [request] (maybe-debug slash-name "Name" request))
-(defmethod handle-custom-id :default [request] (maybe-debug custom-id "custom id" request))
+(defmethod handle-command :default [request] (maybe-debug slash-name "Name" request))
+(defmethod handle-action :default [request] (maybe-debug custom-id "custom id" request))
 
 (defn normalize-options [request]
   (let [options (-> request :data :options)]
@@ -25,5 +25,5 @@
 
 (defmethod events/handle-event :interaction-create [_ request]
   (let [options (normalize-options request)]
-    (handle-name options)
-    (handle-custom-id options)))
+    (handle-command options)
+    (handle-action options)))

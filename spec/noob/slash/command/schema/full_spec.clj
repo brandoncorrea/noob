@@ -1,9 +1,8 @@
-(ns noob.slash.schema.full-spec
+(ns noob.slash.command.schema.full-spec
   (:require [c3kit.apron.corec :as ccc]
             [discord.option :as option]
-            [noob.slash.schema.full :as sut]
+            [noob.slash.command.schema.full :as sut]
             [speclj.core :refer :all]))
-
 
 (defmacro should-have-command
   ([commands name description] `(should-have-command ~commands ~name ~description nil))

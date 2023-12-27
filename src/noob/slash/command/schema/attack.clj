@@ -1,4 +1,4 @@
-(ns noob.slash.schema.attack
+(ns noob.slash.command.schema.attack
   (:require [c3kit.apron.schema :as schema]))
 
 (def schema

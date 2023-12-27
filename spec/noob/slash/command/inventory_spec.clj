@@ -1,8 +1,8 @@
-(ns noob.slash.inventory-spec
+(ns noob.slash.command.inventory-spec
   (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick]]
+            [noob.slash.command.inventory]
             [noob.slash.core :as slash]
-            [noob.slash.inventory]
             [noob.spec-helper :as spec-helper]
             [noob.style.core :as style]
             [noob.user :as user]
@@ -22,12 +22,12 @@
   (context "display"
 
     (it "has no items"
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (spec-helper/should-have-replied-ephemeral @request "Your inventory is empty."))
 
     (it "has one item"
       (db/tx (user/loot @bill @stick))
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<> [:button {:id (:id @stick) :class "primary"} "Stick"]]
         :embed {:title       "Inventory"
@@ -40,7 +40,7 @@
           (user/loot @stick)
           (user/loot @propeller-hat)
           db/tx)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
          [:button {:id (:id @propeller-hat) :class "primary"} "Propeller Hat"]
@@ -56,7 +56,7 @@
           (user/loot @stick)
           (user/equip @stick)
           db/tx)
-      (slash/handle-name @request)
+      (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
          [:button {:id (:id @stick) :class "success"} "Stick"]

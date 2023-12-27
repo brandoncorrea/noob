@@ -1,4 +1,4 @@
-(ns noob.slash.recurrent
+(ns noob.slash.command.recurrent
   (:require [c3kit.apron.time :as time]
             [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
@@ -69,5 +69,5 @@
       (interaction/reply! request (not-ready-message kind time-left))
       (award-niblets! kind user command request))))
 
-(defmethod slash/handle-name "daily" [request] (handle-recurrent :daily request))
-(defmethod slash/handle-name "weekly" [request] (handle-recurrent :weekly request))
+(defmethod slash/handle-command "daily" [request] (handle-recurrent :daily request))
+(defmethod slash/handle-command "weekly" [request] (handle-recurrent :weekly request))

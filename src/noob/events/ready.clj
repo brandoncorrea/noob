@@ -5,7 +5,7 @@
             [discord.bot :as bot]
             [noob.config :as config]
             [noob.events.core :as events]
-            [noob.slash.schema.full :as slash-schema]))
+            [noob.slash.command.schema.full :as slash-schema]))
 
 (defn- commands= [command-1 command-2]
   (every? #(= (% command-1) (% command-2)) [:type :name :description :options]))

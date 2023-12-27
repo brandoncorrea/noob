@@ -1,4 +1,4 @@
-(ns noob.slash.inventory
+(ns noob.slash.command.inventory
   (:require [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
             [noob.core :as core]
@@ -39,7 +39,7 @@
         embed      (describe-inventory inventory (:member request))]
     (interaction/reply! request components :embed embed)))
 
-(defmethod slash/handle-name "inventory" [request]
+(defmethod slash/handle-command "inventory" [request]
   (let [user      (user/current request)
         inventory (realize! (user/inventory user))
         loadout   (user/loadout user)]

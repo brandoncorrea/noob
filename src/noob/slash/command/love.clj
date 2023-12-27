@@ -1,4 +1,4 @@
-(ns noob.slash.love
+(ns noob.slash.command.love
   (:require [discord.interaction :as interaction]
             [noob.slash.core :as slash]
             [noob.user :as user]))
@@ -55,7 +55,7 @@
     (format (rand-nth self-messages) lover)
     (format (rand-nth others-messages) lover beloved)))
 
-(defmethod slash/handle-name "love" [request]
-  (let [lover   (user/mention (-> request :member :user :id))
+(defmethod slash/handle-command "love" [request]
+  (let [lover   (user/mention (user/discord-id request))
         beloved (user/mention (get-in request [:data :options "beloved"]))]
     (interaction/reply! request (create-message lover beloved))))

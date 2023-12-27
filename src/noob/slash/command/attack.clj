@@ -1,4 +1,4 @@
-(ns noob.slash.attack
+(ns noob.slash.command.attack
   (:require [discord.interaction :as interaction]
             [noob.slash.core :as slash]
             [noob.user :as user]))
@@ -72,8 +72,8 @@
     (when (< old-level new-level)
       (interaction/create-message! request (str (user/mention winner) " has reached level " new-level "!")))))
 
-(defmethod slash/handle-name "attack" [request]
-  (let [attacker-id (-> request :member :user :id)
+(defmethod slash/handle-command "attack" [request]
+  (let [attacker-id (user/discord-id request)
         target-id   (get-in request [:data :options "target"])]
     (if (= attacker-id target-id)
       (interaction/reply! request (format (rand-nth self-messages) (user/mention attacker-id)))

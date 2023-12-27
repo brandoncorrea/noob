@@ -8,14 +8,15 @@
             [noob.events.core :as events]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
-            [noob.slash.attack]
-            [noob.slash.give]
-            [noob.slash.inventory]
-            [noob.slash.love]
-            [noob.slash.recurrent]
-            [noob.slash.shop]
-            [noob.slash.stats]
-            [noob.slash.steal]))
+            [noob.slash.action.shop-menu]
+            [noob.slash.command.attack]
+            [noob.slash.command.give]
+            [noob.slash.command.inventory]
+            [noob.slash.command.love]
+            [noob.slash.command.recurrent]
+            [noob.slash.command.shop]
+            [noob.slash.command.stats]
+            [noob.slash.command.steal]))
 
 (defn start-db [] (app/start! [db/service]))
 
