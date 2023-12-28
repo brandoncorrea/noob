@@ -7,12 +7,13 @@
              ;com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.543"} ; required for staging/production
              ;com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.543"}
              com.cleancoders.c3kit/bucket      {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "1f5509a6e47b84597783e6a4526f3f0e4a6d6bb2"}
-             com.github.seancorfield/next.jdbc {:mvn/version "1.2.761"}
-             org.xerial/sqlite-jdbc            {:mvn/version "3.43.2.2"}
-             com.mchange/c3p0                  {:mvn/version "0.9.5.5"}
              com.datomic/peer                  {:mvn/version "1.0.7021"}
+             com.github.seancorfield/next.jdbc {:mvn/version "1.2.761"}
+             com.mchange/c3p0                  {:mvn/version "0.9.5.5"}
+             dev.weavejester/medley            {:mvn/version "1.7.0"}
              org.clojure/clojure               {:mvn/version "1.11.1"}
              org.suskalo/discljord             {:mvn/version "1.3.0"}
+             org.xerial/sqlite-jdbc            {:mvn/version "3.43.2.2"}
              }
  :aliases   {
              :test    {:extra-deps  {speclj/speclj {:mvn/version "3.4.3"}}

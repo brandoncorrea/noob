@@ -12,6 +12,7 @@
                   interaction/reply!             (stub :discord/reply-interaction!)
                   interaction/reply-ephemeral!   (stub :discord/reply-interaction-ephemeral!)
                   interaction/edit-original!     (stub :discord/edit-original!)
+                  interaction/update-message!    (stub :discord/update-message!)
                   interaction/create-message!    (stub :discord/create-message!)
                   interaction/embed!             (stub :discord/embed!)
                   discord-rest/get-current-user! (stub :discord/get-current-user!)]))
@@ -24,14 +25,23 @@
 (defn stub-now [time]
   (redefs-around [time/now (stub :now {:return time})]))
 
-(defmacro should-have-replied [request & messages]
-  `(should-have-invoked :discord/reply-interaction! {:with [~request ~@messages]}))
+(defmacro should-have-replied [request content & {:as options}]
+  `(if-let [options# ~options]
+     (should-have-invoked :discord/reply-interaction! {:with [~request ~content options#]})
+     (should-have-invoked :discord/reply-interaction! {:with [~request ~content]})))
 
 (defmacro should-have-replied-ephemeral [request message]
   `(should-have-invoked :discord/reply-interaction-ephemeral! {:with [~request ~message]}))
 
-(defmacro should-have-edited-message [request content]
-  `(should-have-invoked :discord/edit-original! {:with [~request ~content]}))
+(defmacro should-have-edited-message [request content & {:as options}]
+  `(if-let [options# ~options]
+     (should-have-invoked :discord/edit-original! {:with [~request ~content options#]})
+     (should-have-invoked :discord/edit-original! {:with [~request ~content]})))
+
+(defmacro should-have-updated-message [request content & {:as options}]
+  `(if-let [options# ~options]
+     (should-have-invoked :discord/update-message! {:with [~request ~content options#]})
+     (should-have-invoked :discord/update-message! {:with [~request ~content]})))
 
 (defmacro should-have-created-message [request message]
   `(should-have-invoked :discord/create-message! {:with [~request ~message]}))

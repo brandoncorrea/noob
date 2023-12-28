@@ -2,6 +2,7 @@
   (:require [c3kit.apron.corec :as ccc]
             [discord.api :as api]
             [discord.components.core :as components]
+            [medley.core :as medley]
             [noob.core :as core]))
 
 (def flags
@@ -21,28 +22,53 @@
 
 (defn ->flag [fs] (ccc/sum-by flags fs))
 
-(defn- ->data [content]
+(defn- content->data [content]
   (if (string? content)
     {:content content :components []}
     {:components [{:type 1 :components (components/hiccup->components content)}]}))
 
-(defn reply! [{:keys [id token]} content & {:keys [flags embed]}]
+(defn- ->message-data [content {:keys [flags embed]}]
+  (cond-> (some-> content content->data)
+          (seq flags) (assoc :flags (->flag flags))
+          embed (assoc :embeds [embed])))
+
+(defn- ->message-body [type content options]
+  (medley/assoc-some {:type type} :data (->message-data content options)))
+
+(defn- callback! [type {:keys [id token]} content options]
   (when (and id token)
     (api/post! (str "/interactions/" id "/" token "/callback")
-               (cond-> {:type 4}
-                       content (assoc :data (->data content))
-                       (seq flags) (assoc-in [:data :flags] (->flag flags))
-                       embed (assoc-in [:data :embeds] [embed])))))
+               (->message-body type content options))))
 
-(defn embed! [request embed] (reply! request nil :embed embed))
-(defn reply-ephemeral! [payload content] (reply! payload content :flags [:ephemeral]))
+(defn reply!
+  "Reply to the interaction.
+   Acknowledges the interaction."
+  [request content & {:as options}]
+  (callback! 4 request content options))
 
-(defn edit-original! [request content]
+(defn reply-ephemeral!
+  "Reply to the interaction with the :ephemeral flag.
+   Acknowledges the interaction."
+  [payload content] (reply! payload content :flags [:ephemeral]))
+
+(defn update-message!
+  "Update the original message.
+   Acknowledges the interaction."
+  [request content & {:as options}]
+  (callback! 7 request content options))
+
+(defn edit-original!
+  "Edit the original message.
+   Does not acknowledge the interaction."
+  [request content & {:as options}]
   (let [{:keys [id channel-id]} (:message request)]
     (when (and id channel-id content)
-      (api/patch! (str "/channels/" channel-id "/messages/" id) (->data content)))))
+      (api/patch! (str "/channels/" channel-id "/messages/" id)
+                  (->message-data content options)))))
+
+(defn embed! [request embed] (reply! request nil :embed embed))
 
 (defn create-message! [request content]
   (let [channel-id (:channel-id request)]
     (when (and channel-id content)
-      (api/post! (str "/channels/" channel-id "/messages") (->data content)))))
+      (api/post! (str "/channels/" channel-id "/messages") (content->data content)))))

@@ -14,11 +14,11 @@
    :content-type :json
    :headers      {"Authorization" "Bot bot-token"}})
 
-(defmacro should-post-with-data [data]
+(defmacro should-callback [type data]
   `(let [data# ~data]
      (should-have-invoked :post {:with ["https://discord.com/api/v10/interactions/1/abc/callback"
                                         (->request-options
-                                          (cond-> {:type 4}
+                                          (cond-> {:type ~type}
                                                   data# (assoc :data (->message-data data#))))]})))
 
 (defmacro should-patch-with-data [data]
@@ -50,7 +50,7 @@
 
   (it "reply-ephemeral!"
     (sut/reply-ephemeral! @request "Some content")
-    (should-post-with-data {:content "Some content" :flags (:ephemeral sut/flags)}))
+    (should-callback 4 {:content "Some content" :flags (:ephemeral sut/flags)}))
 
   (context "reply-interaction!"
     (it "missing token"
@@ -63,20 +63,48 @@
 
     (it "missing content"
       (sut/reply! @request nil)
-      (should-post-with-data nil))
+      (should-callback 4 nil))
 
     (it "posts message"
       (sut/reply! @request "Some content")
-      (should-post-with-data {:content "Some content"}))
+      (should-callback 4 {:content "Some content"}))
 
     (it "with flags"
       (sut/reply! @request "Some content" :flags [:voice-message :cross-posted :urgent])
-      (should-post-with-data {:content "Some content"
-                              :flags   (sut/->flag [:voice-message :cross-posted :urgent])}))
+      (should-callback 4 {:content "Some content"
+                          :flags   (sut/->flag [:voice-message :cross-posted :urgent])}))
 
     (it "with hiccup"
       (sut/reply! @request [:select [:option "foo"]])
-      (should-post-with-data {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+      (should-callback 4 {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+
+    )
+
+  (context "update-message!"
+    (it "missing token"
+      (sut/update-message! (dissoc @request :token) "Some content")
+      (should-not-have-invoked :post))
+
+    (it "missing id"
+      (sut/update-message! (dissoc @request :id) "Some content")
+      (should-not-have-invoked :post))
+
+    (it "missing content"
+      (sut/update-message! @request nil)
+      (should-callback 7 nil))
+
+    (it "posts message"
+      (sut/update-message! @request "Some content")
+      (should-callback 7 {:content "Some content"}))
+
+    (it "with flags"
+      (sut/update-message! @request "Some content" :flags [:voice-message :cross-posted :urgent])
+      (should-callback 7 {:content "Some content"
+                          :flags   (sut/->flag [:voice-message :cross-posted :urgent])}))
+
+    (it "with hiccup"
+      (sut/update-message! @request [:select [:option "foo"]])
+      (should-callback 7 {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
 
     )
 
@@ -102,5 +130,5 @@
 
   (it "embed!"
     (sut/embed! @request {:some :embed})
-    (should-post-with-data {:embeds [{:some :embed}]}))
+    (should-callback 4 {:embeds [{:some :embed}]}))
   )

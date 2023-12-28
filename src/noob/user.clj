@@ -59,6 +59,7 @@
        (remove #(= (:slot %) (:slot item)))
        (map :id)
        (cons (:id item))
+       doall
        utilc/->edn))
 
 (defn equip [user item]

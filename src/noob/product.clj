@@ -1,5 +1,6 @@
 (ns noob.product
-  (:require [c3kit.bucket.api :as db]))
+  (:require [c3kit.bucket.api :as db]
+            [c3kit.bucket.jdbc]))
 
 (def slot-names
   {

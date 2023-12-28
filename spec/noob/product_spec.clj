@@ -1,8 +1,11 @@
 (ns noob.product-spec
-  (:require [noob.product :as sut]
+  (:require [noob.bogus :as bogus]
+            [noob.product :as sut]
             [speclj.core :refer :all]))
 
 (describe "Product"
+  (with-stubs)
+  (bogus/with-kinds :all)
 
   (it "names"
     (should-be-nil (sut/slot-names :foo))

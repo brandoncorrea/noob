@@ -31,15 +31,19 @@
   (->> (map #(render-item loadout %) inventory)
        (into [:<>])))
 
-(defn display-inventory [request inventory loadout]
-  (let [components (render-inventory inventory loadout)
+(defn ->inventory-content [request user]
+  (let [inventory  (user/inventory! user)
+        loadout    (user/loadout user)
+        components (render-inventory inventory loadout)
         embed      (describe-inventory inventory (:member request))]
-    (interaction/reply! request components :embed embed)))
+    [components {:embed embed}]))
+
+(defn display-inventory [request user]
+  (let [[content options] (->inventory-content request user)]
+    (interaction/reply! request content options)))
 
 (defmethod slash/handle-command "inventory" [request]
-  (let [user      (user/current request)
-        inventory (user/inventory! user)
-        loadout   (user/loadout user)]
-    (if (seq inventory)
-      (display-inventory request inventory loadout)
+  (let [user (user/current request)]
+    (if (seq (user/inventory user))
+      (display-inventory request user)
       (interaction/reply-ephemeral! request "Your inventory is empty."))))
