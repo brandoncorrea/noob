@@ -17,12 +17,13 @@
 
   (redefs-around [sut/fail-messages           ["%1$s fails to steal from %2$s"]
                   sut/self-messages           ["%s steals from themselves"]
-                  sut/almost-success-messages ["You almost succeeded"]])
+                  sut/almost-success-messages ["%s almost succeeded"]])
 
   (context "stealing niblets"
 
     (with request {:data   {:name "steal" :options {:victim (:discord-id @ted)}}
-                   :member {:user {:id (:discord-id @bill)}}})
+                   :member {:nick "bill"
+                            :user {:id (:discord-id @bill)}}})
 
     (it "steals from self"
       (let [request (assoc-in @request [:data :options :victim] (:discord-id @bill))]
@@ -58,7 +59,7 @@
                     roll/stolen-niblets (stub :stolen-niblets {:return -10})]
         (db/tx @ted :niblets 100)
         (slash/handle-command @request)
-        (should-have-replied-ephemeral @request "You almost succeeded")
+        (should-have-replied @request "<@bill-id> almost succeeded")
         (should= 100 (:niblets @ted))
         (should-be-nil (:niblets @bill))))
 

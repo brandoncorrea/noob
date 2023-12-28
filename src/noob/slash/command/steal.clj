@@ -18,11 +18,18 @@
 (def self-messages
   [
    "You want to steal from... yourself?!"
+   "You can't steal from yourself, NOOB!"
+   "You reach into your own pocket and find nothing but lint."
+   "You break into a house and pick the place drier than the Grinch on Christmas. As you start to head home, you realize you broke into your own house."
+   "You steal the radio out of your own car. Impressive!"
    ])
 
 (def almost-success-messages
   [
-   "You snuck by unnoticed, but still failed to get a single penny."
+   "%s sneaks by unnoticed and still fails to get a single cent."
+   "%s over-rotated a lock, jamming it and making it inaccessible."
+   "Months of meticulous planning lead %s to execute a flawless heist, stealing what they believe to be a collection of prized artwork. However, upon returning home, %s faces an unexpected twist: the real art had already been stolen, and they had unknowingly lifted a set of near-perfect replicas."
+   "In a stroke of bad luck, %s successfully hijacks a train, expecting a significant payoff. But the triumph is fleeting when the train suddenly runs out of coal, coming to a standstill in a remote area."
    ])
 
 (defn roll-theft [theft-fn thief victim]
@@ -37,7 +44,7 @@
         reward (min (theft-reward thief victim) wallet)]
     (cond
       (<= wallet 0) (interaction/reply-ephemeral! request "There are no Niblets to steal :(")
-      (<= reward 0) (interaction/reply-ephemeral! request (rand-nth almost-success-messages))
+      (<= reward 0) (interaction/reply! request (format (rand-nth almost-success-messages) (user/mention thief)))
       :else (do (user/transfer-niblets! victim thief reward)
                 (interaction/reply-ephemeral! request (str "You stole " reward " Niblets 😈"))))))
 
