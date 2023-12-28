@@ -7,7 +7,7 @@
 
 (defn give-niblets! [request from to amount]
   (user/transfer-niblets! from to amount)
-  (interaction/reply! request (str (user/mention from) " gave " (user/mention to) " " (core/niblet-term amount) "!")))
+  (interaction/reply! request (str (user/display-name request) " gave " (user/resolved-name request to) " " (core/niblet-term amount) "!")))
 
 (defmethod slash/handle-command "give" [request]
   (let [amount    (option/get-option request :amount)

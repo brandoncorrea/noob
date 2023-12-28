@@ -26,10 +26,10 @@
 
 (def almost-success-messages
   [
-   "%s sneaks by unnoticed and still fails to get a single cent."
-   "%s over-rotated a lock, jamming it and making it inaccessible."
-   "Months of meticulous planning lead %s to execute a flawless heist, stealing what they believe to be a collection of prized artwork. However, upon returning home, %s faces an unexpected twist: the real art had already been stolen, and they had unknowingly lifted a set of near-perfect replicas."
-   "In a stroke of bad luck, %s successfully hijacks a train, expecting a significant payoff. But the triumph is fleeting when the train suddenly runs out of coal, coming to a standstill in a remote area."
+   "You sneak by unnoticed and still fails to get a single cent."
+   "You over-rotated a lock, jamming it and making it inaccessible."
+   "Months of meticulous planning lead you to execute a flawless heist, stealing what you believe to be a collection of prized artwork. However, upon returning home, you faces an unexpected twist: the real art had already been stolen, and you had unknowingly lifted a set of near-perfect replicas."
+   "In a stroke of bad luck, you successfully hijack a train, expecting a significant payoff. But the triumph is fleeting when the train suddenly runs out of coal, coming to a standstill in a remote area."
    ])
 
 (defn roll-theft [theft-fn thief victim]
@@ -44,17 +44,17 @@
         reward (min (theft-reward thief victim) wallet)]
     (cond
       (<= wallet 0) (interaction/reply-ephemeral! request "There are no Niblets to steal :(")
-      (<= reward 0) (interaction/reply! request (format (rand-nth almost-success-messages) (user/mention thief)))
+      (<= reward 0) (interaction/reply! request (rand-nth almost-success-messages))
       :else (do (user/transfer-niblets! victim thief reward)
                 (interaction/reply-ephemeral! request (str "You stole " reward " Niblets 😈"))))))
 
 (defn fail! [request thief victim]
-  (interaction/reply! request (format (rand-nth fail-messages) (user/mention thief) (user/mention victim)))
+  (interaction/reply! request (format (rand-nth fail-messages) (user/display-name request) (user/resolved-name request victim)))
   (let [wallet (:niblets thief 0)
         reward (* 3 (max (theft-reward thief victim) 0))]
     (when (and (pos? wallet) (pos? reward))
       (user/transfer-niblets! thief victim reward)
-      (interaction/create-message! request (str (user/mention thief) " pays a " reward " Niblet fine!")))))
+      (interaction/create-message! request (str (user/display-name request) " pays a " reward " Niblet fine!")))))
 
 (defn attempt-steal! [request thief-id victim-id]
   (let [thief  (user/find-or-create thief-id)
@@ -67,5 +67,5 @@
   (let [thief-id  (user/discord-id request)
         victim-id (get-in request [:data :options :victim])]
     (if (= thief-id victim-id)
-      (interaction/reply! request (format (rand-nth self-messages) (user/mention thief-id)))
+      (interaction/reply! request (format (rand-nth self-messages) (user/display-name request)))
       (attempt-steal! request thief-id victim-id))))

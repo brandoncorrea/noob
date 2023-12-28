@@ -1,6 +1,5 @@
 (ns noob.user-spec
-  (:require [c3kit.apron.utilc :as utilc]
-            [c3kit.bucket.api :as db]
+  (:require [c3kit.bucket.api :as db]
             [noob.bogus :as bogus :refer [bill propeller-hat stick ted]]
             [noob.roll :as roll]
             [noob.user :as user]
@@ -25,6 +24,13 @@
       (should= name (sut/display-name {:global-name "billy"}))
       (should= name (sut/display-name {:user {:global-name "billy"}}))
       (should-be-nil (sut/display-name {}))))
+
+  (it "resolved-name"
+    (let [name "billy"]
+      (should= name (sut/resolved-name {:data {:resolved {:members {"bill-id" {:nick name}}}}} "bill-id"))
+      (should= name (sut/resolved-name {:data {:resolved {:users {"bill-id" {:global-name name}}}}} "bill-id"))
+      (should= name (sut/resolved-name {:data {:resolved {:users {"bill-id" {:username name}}}}} "bill-id"))
+      (should= name (sut/resolved-name {:data {:resolved {:users {"bill-id" {:username name}}}}} {:discord-id "bill-id"}))))
 
   (it "level"
     (should= 1 (sut/level {}))

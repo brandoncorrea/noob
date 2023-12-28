@@ -17,18 +17,22 @@
 
   (redefs-around [sut/fail-messages           ["%1$s fails to steal from %2$s"]
                   sut/self-messages           ["%s steals from themselves"]
-                  sut/almost-success-messages ["%s almost succeeded"]])
+                  sut/almost-success-messages ["You almost succeeded"]])
 
   (context "stealing niblets"
 
-    (with request {:data   {:name "steal" :options {:victim (:discord-id @ted)}}
-                   :member {:nick "bill"
+    (with request {:data   {:name     "steal"
+                            :resolved {:users   {(:discord-id @ted) {:global-name "Ted"
+                                                                     :username    "Bogus Ted"}}
+                                       :members {(:discord-id @ted) {:nick "teddy"}}}
+                            :options  {:victim (:discord-id @ted)}}
+                   :member {:nick "billy"
                             :user {:id (:discord-id @bill)}}})
 
     (it "steals from self"
       (let [request (assoc-in @request [:data :options :victim] (:discord-id @bill))]
         (slash/handle-command request)
-        (should-have-replied request (str (user/mention @bill) " steals from themselves"))))
+        (should-have-replied request "billy steals from themselves")))
 
     (it "steals from user with no Niblets"
       (with-redefs [roll/steal? (constantly true)]
@@ -59,7 +63,7 @@
                     roll/stolen-niblets (stub :stolen-niblets {:return -10})]
         (db/tx @ted :niblets 100)
         (slash/handle-command @request)
-        (should-have-replied @request "<@bill-id> almost succeeded")
+        (should-have-replied @request "You almost succeeded")
         (should= 100 (:niblets @ted))
         (should-be-nil (:niblets @bill))))
 
@@ -79,7 +83,7 @@
                     roll/stolen-niblets (stub :stolen-niblets {:return 10})]
         (db/tx @ted :niblets 100)
         (slash/handle-command @request)
-        (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
+        (should-have-replied @request "billy fails to steal from teddy")
         (should= 100 (:niblets @ted))
         (should-be-nil (:niblets @bill))))
 
@@ -90,8 +94,8 @@
         (db/tx @bill :niblets 100)
         (slash/handle-command @request)
         (should-have-invoked :stolen-niblets {:with [2 0 1 0]})
-        (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
-        (should-have-created-message @request (str (user/mention @bill) " pays a 30 Niblet fine!"))
+        (should-have-replied @request "billy fails to steal from teddy")
+        (should-have-created-message @request "billy pays a 30 Niblet fine!")
         (should= 130 (:niblets @ted))
         (should= 70 (:niblets @bill))))
 
@@ -101,11 +105,9 @@
         (db/tx @ted :niblets 100)
         (db/tx @bill :niblets 100)
         (slash/handle-command @request)
-        (should-have-replied @request (str (user/mention @bill) " fails to steal from " (user/mention @ted)))
+        (should-have-replied @request "billy fails to steal from teddy")
         (should-not-have-invoked :discord/create-message!)
         (should= 100 (:niblets @ted))
         (should= 100 (:niblets @bill))))
-
     )
-
   )

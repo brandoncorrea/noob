@@ -50,12 +50,14 @@
    "%1$s writes a letter to %2$s expressing their true love."
    ])
 
-(defn create-message [lover beloved]
-  (if (= lover beloved)
-    (format (rand-nth self-messages) lover)
-    (format (rand-nth others-messages) lover beloved)))
+(defn create-message [request lover-id beloved-id]
+  (let [lover-name   (user/display-name request)
+        beloved-name (user/resolved-name request beloved-id)]
+    (if (= lover-id beloved-id)
+      (format (rand-nth self-messages) lover-name)
+      (format (rand-nth others-messages) lover-name beloved-name))))
 
 (defmethod slash/handle-command "love" [request]
-  (let [lover   (user/mention (user/discord-id request))
-        beloved (user/mention (get-in request [:data :options :beloved]))]
-    (interaction/reply! request (create-message lover beloved))))
+  (let [lover   (user/discord-id request)
+        beloved (get-in request [:data :options :beloved])]
+    (interaction/reply! request (create-message request lover beloved))))

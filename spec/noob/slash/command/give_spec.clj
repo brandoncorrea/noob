@@ -9,10 +9,12 @@
             [speclj.core :refer :all]))
 
 (defn ->give-request [sender recipient amount]
-  {:data   {:name    "give"
-            :options {:recipient (:discord-id recipient)
-                      :amount    amount}}
-   :member {:user {:id (:discord-id sender)}}})
+  {:data   {:name     "give"
+            :resolved {:members {(:discord-id recipient) {:nick (str "receiver-" (:discord-id recipient))}}}
+            :options  {:recipient (:discord-id recipient)
+                       :amount    amount}}
+   :member {:nick (str "giver-" (:discord-id sender))
+            :user {:id (:discord-id sender)}}})
 
 (describe "Give Command"
   (with-stubs)
@@ -44,7 +46,7 @@
     (let [request (->give-request @bill @ted 1)]
       (db/tx @bill :niblets 1)
       (slash/handle-command request)
-      (should-have-replied request "<@bill-id> gave <@ted-id> 1 Niblet!")
+      (should-have-replied request "giver-bill-id gave receiver-ted-id 1 Niblet!")
       (should= 0 (:niblets @bill))
       (should= 1 (:niblets @ted))))
 
@@ -52,7 +54,7 @@
     (let [request (->give-request @bill @ted 2)]
       (db/tx @bill :niblets 2)
       (slash/handle-command request)
-      (should-have-replied request "<@bill-id> gave <@ted-id> 2 Niblets!")
+      (should-have-replied request "giver-bill-id gave receiver-ted-id 2 Niblets!")
       (should= 0 (:niblets @bill))
       (should= 2 (:niblets @ted))))
 
@@ -60,7 +62,7 @@
     (let [request (->give-request @ted @bill 10)]
       (db/tx @ted :niblets 20)
       (slash/handle-command request)
-      (should-have-replied request "<@ted-id> gave <@bill-id> 10 Niblets!")
+      (should-have-replied request "giver-ted-id gave receiver-bill-id 10 Niblets!")
       (should= 10 (:niblets @ted))
       (should= 10 (:niblets @bill))))
 
@@ -75,7 +77,7 @@
     (let [request (->give-request @bill {:discord-id "new-guy"} 10)]
       (db/tx @bill :niblets 12)
       (slash/handle-command request)
-      (should-have-replied request "<@bill-id> gave <@new-guy> 10 Niblets!")
+      (should-have-replied request "giver-bill-id gave receiver-new-guy 10 Niblets!")
       (should= {:kind :user :niblets 10 :discord-id "new-guy"} (dissoc (user/by-discord-id "new-guy") :id))
       (should= 2 (:niblets @bill))))
 

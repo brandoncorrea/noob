@@ -68,7 +68,7 @@
         old-level (user/level winner)
         winner    (user/gain-xp! winner xp-factor (user/level loser))
         new-level (user/level winner)]
-    (interaction/reply! request (format (rand-nth messages) (user/mention attacker) (user/mention target)))
+    (interaction/reply! request (format (rand-nth messages) (user/display-name request) (user/resolved-name request target)))
     (when (< old-level new-level)
       (interaction/create-message! request (str (user/mention winner) " has reached level " new-level "!")))))
 
@@ -76,5 +76,5 @@
   (let [attacker-id (user/discord-id request)
         target-id   (-> request :data :options :target)]
     (if (= attacker-id target-id)
-      (interaction/reply! request (format (rand-nth self-messages) (user/mention attacker-id)))
+      (interaction/reply! request (format (rand-nth self-messages) (user/display-name request)))
       (fight! request attacker-id target-id))))

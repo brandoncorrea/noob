@@ -21,25 +21,28 @@
 
   (context "attacking people"
 
-    (with request {:data   {:name "attack" :options {:target (:discord-id @ted)}}
-                   :member {:user {:id (:discord-id @bill)}}})
+    (with request {:data   {:name     "attack"
+                            :resolved {:members {(:discord-id @ted) {:nick "teddy"}}}
+                            :options  {:target (:discord-id @ted)}}
+                   :member {:nick "billy"
+                            :user {:id (:discord-id @bill)}}})
 
     (it "attacks self"
       (let [request (assoc-in @request [:data :options :target] (:discord-id @bill))]
         (slash/handle-command request)
-        (should-have-replied request (str (user/mention @bill) " attacks themselves"))))
+        (should-have-replied request "billy attacks themselves")))
 
     (it "fails attack"
       (with-redefs [user/roll (fn [_user ability] (if (= :defense ability) 1 0))]
         (slash/handle-command @request)
-        (should-have-replied @request (str (user/mention @bill) " fails to attack " (user/mention @ted)))
+        (should-have-replied @request "billy fails to attack teddy")
         (should= 100 (:xp @bill))
         (should= (roll/xp-reward 1 15 2) (:xp @ted))))
 
     (it "succeeds attack"
       (with-redefs [user/roll (fn [_user ability] (if (= :attack ability) 1 0))]
         (slash/handle-command @request)
-        (should-have-replied @request (str (user/mention @bill) " attacks " (user/mention @ted)))
+        (should-have-replied @request "billy attacks teddy")
         (should= (+ 100 (roll/xp-reward 2 25 1)) (:xp @bill))
         (should-be-nil (:xp @ted))))
 
@@ -52,6 +55,6 @@
     (it "target wins on ties"
       (with-redefs [user/roll (fn [_user ability] (if (= :attack ability) 1 0.75))]
         (slash/handle-command @request)
-        (should-have-replied @request (str (user/mention @bill) " fails to attack " (user/mention @ted)))))
+        (should-have-replied @request "billy fails to attack teddy")))
     )
   )

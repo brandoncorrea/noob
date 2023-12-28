@@ -75,10 +75,18 @@
       (withdraw-niblets (:price item))
       db/tx))
 
-(defn display-name [member-or-user]
-  (or (:nick member-or-user)
-      (:global-name member-or-user)
-      (-> member-or-user :user :global-name)))
+(defn display-name [e-or-request]
+  (let [{:keys [nick global-name user]} (:member e-or-request e-or-request)]
+    (or nick global-name (:global-name user))))
+
+(defn resolved-name [request discord-id]
+  (let [discord-id (:discord-id discord-id discord-id)
+        {:keys [users members]} (-> request :data :resolved)
+        member     (get members discord-id)
+        user       (get users discord-id)]
+    (or (:nick member)
+        (:global-name user)
+        (:username user))))
 
 (defn avatar [member-or-user]
   (let [user-id (or (:id member-or-user)
