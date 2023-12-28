@@ -2,6 +2,8 @@
   (:require [c3kit.apron.corec :as ccc]
             [c3kit.apron.utilc :as utilc]
             [c3kit.bucket.api :as db]
+            [noob.core :as core]
+            [noob.product :as product]
             [noob.roll :as roll]))
 
 (defn by-discord-id [id] (db/ffind-by :user :discord-id id))
@@ -15,7 +17,9 @@
       (create discord-id)))
 
 (defn inventory [user] (-> user :inventory utilc/<-edn))
+(defn inventory! [user] (-> user inventory product/entities))
 (defn loadout [user] (-> user :loadout utilc/<-edn))
+(defn loadout! [user] (-> user loadout product/entities))
 
 (defn update-niblets [f user amount]
   (if (:niblets user)
@@ -43,16 +47,33 @@
     10))
 
 (defn niblets [user] (:niblets user 0))
-(defn owns? [user item] (some (partial = (:id item)) (inventory user)))
+(defn owns? [user item] (some (partial = (:id item item)) (inventory user)))
 (defn unslotted? [user slot]
-  (not-any? #(-> % db/entity :slot (= slot)) (loadout user)))
+  (not-any? #(-> % product/entity :slot (= slot)) (loadout user)))
+
+(defn equipped? [user item]
+  (core/some= (:id item item) (loadout user)))
+
+(defn swap-slotted-item [user item]
+  (->> (loadout! user)
+       (remove #(= (:slot %) (:slot item)))
+       (map :id)
+       (cons (:id item))
+       utilc/->edn))
 
 (defn equip [user item]
-  (assoc user :loadout (utilc/->edn (conj (loadout user) (:id item)))))
+  (assoc user :loadout (swap-slotted-item user item)))
+
+(defn equip! [user item] (db/tx (equip user item)))
+
+(defn unequip [user item]
+  (assoc user :loadout (utilc/->edn (ccc/removev= (loadout user) (:id item item)))))
+
+(defn unequip! [user item] (db/tx (unequip user item)))
 
 (defn ability-score [user ability]
-  (->> (loadout user)
-       (ccc/map-some (comp ability db/entity))
+  (->> (loadout! user)
+       (ccc/map-some ability)
        (reduce +)))
 
 (defn roll [user ability]
@@ -68,6 +89,8 @@
 
 (defn loot [user item]
   (assoc user :inventory (utilc/->edn (conj (inventory user) (:id item)))))
+
+(defn loot! [user item] (db/tx (loot user item)))
 
 (defn purchase! [user item]
   (-> user

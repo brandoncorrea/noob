@@ -1,5 +1,6 @@
 (ns noob.slash.command.love-spec
-  (:require [noob.bogus :as bogus]
+  (:require [c3kit.apron.utilc :as utilc]
+            [noob.bogus :as bogus]
             [noob.bogus :refer [bill ted]]
             [noob.slash.command.love :as sut]
             [noob.slash.core :as slash]

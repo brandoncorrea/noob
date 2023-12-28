@@ -29,7 +29,7 @@
       (db/tx (user/loot @bill @stick))
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
-        [:<> [:button {:id (:id @stick) :class "primary"} "Stick"]]
+        [:<> [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]
         :embed {:title       "Inventory"
                 :description "Stick ⚔️ 1 ⭐️ 1"
                 :color       style/green
@@ -43,8 +43,8 @@
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
-         [:button {:id (:id @propeller-hat) :class "primary"} "Propeller Hat"]
-         [:button {:id (:id @stick) :class "primary"} "Stick"]]
+         [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]
+         [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]
         :embed {:title       "Inventory"
                 :description "Propeller Hat 👁 2 ⭐️ 2\nStick ⚔️ 1 ⭐️ 1"
                 :color       style/green
@@ -59,8 +59,8 @@
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
-         [:button {:id (:id @stick) :class "success"} "Stick"]
-         [:button {:id (:id @propeller-hat) :class "primary"} "Propeller Hat"]]
+         [:button {:id (str "inventory-button-" (:id @stick)) :class "success"} "Stick"]
+         [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]]
         :embed {:title       "Inventory"
                 :description "Stick ⚔️ 1 ⭐️ 1\nPropeller Hat 👁 2 ⭐️ 2"
                 :color       style/green

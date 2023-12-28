@@ -7,7 +7,12 @@
 (def custom-id (comp :custom-id :data))
 
 (defmulti handle-command slash-name)
-(defmulti handle-action custom-id)
+(defmulti handle-action
+          (fn [request]
+            (when-let [id (custom-id request)]
+              (if (re-matches #"inventory-button-\d+" id)
+                "inventory-button"
+                id))))
 
 (defn maybe-debug [key-fn label request]
   (when-let [name (key-fn request)]

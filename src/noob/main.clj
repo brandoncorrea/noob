@@ -8,6 +8,7 @@
             [noob.events.core :as events]
             [noob.events.ready]
             [noob.schema.full :as schema.full]
+            [noob.slash.action.inventory-button]
             [noob.slash.action.shop-menu]
             [noob.slash.command.attack]
             [noob.slash.command.give]

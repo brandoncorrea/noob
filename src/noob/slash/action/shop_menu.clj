@@ -1,7 +1,7 @@
 (ns noob.slash.action.shop-menu
   (:require [c3kit.apron.schema :as schema]
-            [c3kit.bucket.api :as db]
             [discord.interaction :as interaction]
+            [noob.product :as product]
             [noob.slash.command.shop :as shop]
             [noob.slash.core :as slash]
             [noob.user :as user]))
@@ -22,7 +22,7 @@
     (interaction/reply-ephemeral! request (str (:name item) " has been added to your inventory!"))))
 
 (defn requested-product [request]
-  (->> request :data :values first schema/->int (db/entity :product)))
+  (-> request :data :values first schema/->int product/entity))
 
 (defmethod slash/handle-action "shop-menu" [request]
   (let [{:keys [price level name] :as item} (requested-product request)

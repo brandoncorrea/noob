@@ -21,3 +21,6 @@
       :name name
       :price price
       :level level)))
+
+(defn entity [id] (db/entity :product id))
+(defn entities [ids] (map entity ids))

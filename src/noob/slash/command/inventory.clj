@@ -1,6 +1,5 @@
 (ns noob.slash.command.inventory
-  (:require [c3kit.bucket.api :as db]
-            [discord.interaction :as interaction]
+  (:require [discord.interaction :as interaction]
             [noob.core :as core]
             [noob.slash.core :as slash]
             [noob.style.core :as style]
@@ -26,13 +25,11 @@
 
 (defn render-item [loadout {:keys [id name]}]
   (let [class (if (core/some= id loadout) "success" "primary")]
-    [:button {:id id :class class} name]))
+    [:button {:id (str "inventory-button-" id) :class class} name]))
 
 (defn render-inventory [inventory loadout]
   (->> (map #(render-item loadout %) inventory)
        (into [:<>])))
-
-(defn realize! [ids] (map db/entity ids))
 
 (defn display-inventory [request inventory loadout]
   (let [components (render-inventory inventory loadout)
@@ -41,7 +38,7 @@
 
 (defmethod slash/handle-command "inventory" [request]
   (let [user      (user/current request)
-        inventory (realize! (user/inventory user))
+        inventory (user/inventory! user)
         loadout   (user/loadout user)]
     (if (seq inventory)
       (display-inventory request inventory loadout)
