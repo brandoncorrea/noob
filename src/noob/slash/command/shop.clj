@@ -18,7 +18,7 @@
 
 (def menu-root [:select#shop-menu {:placeholder "Select an option"}])
 (defn ->shop-menu [products]
-  (into menu-root (map ->option) products))
+  [:tr (into menu-root (map ->option) products)])
 
 (defn unowned-products [user]
   (let [owner? (comp (-> user user/inventory set) :id)]

@@ -23,10 +23,21 @@
        [:input]])
 
     (test-hiccup "contains another fragment"
-      [[{:style 1 :type 2}]]
+      [{:style 1 :type 2}]
       [:<>
        [:<>
-        [:button]]]))
+        [:button]]])
+
+    (test-hiccup "many nested fragments containing a button"
+      [{:style 1 :type 2}]
+      [:<>
+       [:<>
+        [:<>
+         [:<>
+          [:<>
+           [:button]]]]]])
+    )
+
 
   (context "Action Row"
     (test-hiccup "empty row"

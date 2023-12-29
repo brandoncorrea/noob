@@ -25,7 +25,7 @@
 (defn- content->data [content]
   (if (string? content)
     {:content content :components []}
-    {:components [{:type 1 :components (components/hiccup->components content)}]}))
+    {:components (components/hiccup->components content)}))
 
 (defn- ->message-data [content {:keys [flags embed]}]
   (cond-> (some-> content content->data)

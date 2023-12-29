@@ -17,43 +17,50 @@
 
   (context "shop menu"
     (it "head with perception"
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 2"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 2"]]]
                (sut/->shop-menu [@propeller-hat])))
 
     (it "main hand with attack"
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description "A sticky stick." :value (:id @stick)} "Stick – Main Hand – 🪙 100 ⚔️ 1"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description "A sticky stick." :value (:id @stick)} "Stick – Main Hand – 🪙 100 ⚔️ 1"]]]
                (sut/->shop-menu [@stick])))
 
     (it "two items"
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 2"]
-                [:option {:description "A sticky stick." :value (:id @stick)} "Stick – Main Hand – 🪙 100 ⚔️ 1"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 2"]
+                 [:option {:description "A sticky stick." :value (:id @stick)} "Stick – Main Hand – 🪙 100 ⚔️ 1"]]]
                (sut/->shop-menu [@propeller-hat @stick])))
 
     (it "sneak"
       (db/tx @propeller-hat :sneak 4 :perception nil)
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 🥷 4"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 🥷 4"]]]
                (sut/->shop-menu [@propeller-hat])))
 
     (it "defense"
       (db/tx @propeller-hat :defense 3 :perception nil)
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 🛡 3"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 🛡 3"]]]
                (sut/->shop-menu [@propeller-hat])))
 
     (it "level 0 attributes"
       (db/tx @propeller-hat :attack 0 :defense 0 :sneak 0 :perception 0)
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250"]]]
                (sut/->shop-menu [@propeller-hat])))
 
     (it "negative attributes"
       (db/tx @propeller-hat :perception -1)
-      (should= [:select#shop-menu {:placeholder "Select an option"}
-                [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 -1"]]
+      (should= [:tr
+                [:select#shop-menu {:placeholder "Select an option"}
+                 [:option {:description nil :value (:id @propeller-hat)} "Propeller Hat – Head – 🪙 250 👁 -1"]]]
                (sut/->shop-menu [@propeller-hat])))
     )
 

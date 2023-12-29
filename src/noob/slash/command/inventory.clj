@@ -29,6 +29,8 @@
 
 (defn render-inventory [inventory loadout]
   (->> (map #(render-item loadout %) inventory)
+       (partition-all 5)
+       (map #(into [:tr] %))
        (into [:<>])))
 
 (defn ->inventory-content [request user]

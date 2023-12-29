@@ -76,7 +76,7 @@
 
     (it "with hiccup"
       (sut/reply! @request [:select [:option "foo"]])
-      (should-callback 4 {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+      (should-callback 4 {:components [{:type 3 :options [{:label "foo"}]}]}))
 
     )
 
@@ -104,7 +104,7 @@
 
     (it "with hiccup"
       (sut/update-message! @request [:select [:option "foo"]])
-      (should-callback 7 {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+      (should-callback 7 {:components [{:type 3 :options [{:label "foo"}]}]}))
 
     )
 
@@ -124,7 +124,7 @@
 
     (it "with hiccup"
       (sut/edit-original! {:message {:id "foo" :channel-id "bar"}} [:select [:option "foo"]])
-      (should-patch-with-data {:components [{:type 1 :components [{:type 3 :options [{:label "foo"}]}]}]}))
+      (should-patch-with-data {:components [{:type 3 :options [{:label "foo"}]}]}))
 
     )
 

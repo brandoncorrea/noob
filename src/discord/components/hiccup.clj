@@ -33,4 +33,15 @@
 
 (defn ->tag [hiccup] (->> hiccup first name (re-find #"^[^#.]*") keyword))
 (def split-hiccup (juxt ->tag ->options ->body))
-(defn <-hiccup [hiccup] (apply component/->component (split-hiccup hiccup)))
+
+(defn flatten-fragments [element]
+  (cond
+    (not (sequential? element)) [element]
+    (= (first element) :<>) (mapcat flatten-fragments (rest element))
+    :else [(mapcat flatten-fragments element)]))
+
+(defn flatten-hiccup [hiccup]
+  (mapcat flatten-fragments hiccup))
+
+(defn <-hiccup [hiccup]
+  (->> hiccup flatten-hiccup split-hiccup (apply component/->component)))

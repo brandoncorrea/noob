@@ -6,7 +6,8 @@
             [noob.spec-helper :as spec-helper]
             [noob.style.core :as style]
             [noob.user :as user]
-            [speclj.core :refer :all]))
+            [speclj.core :refer :all]
+            [speclj.stub :as stub]))
 
 (declare request)
 
@@ -29,7 +30,7 @@
       (db/tx (user/loot @bill @stick))
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
-        [:<> [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]
+        [:<> [:tr [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]]
         :embed {:title       "Inventory"
                 :description "Stick ⚔️ 1 ⭐️ 1"
                 :color       style/green
@@ -43,8 +44,9 @@
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
-         [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]
-         [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]
+         [:tr
+          [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]
+          [:button {:id (str "inventory-button-" (:id @stick)) :class "primary"} "Stick"]]]
         :embed {:title       "Inventory"
                 :description "Propeller Hat 👁 2 ⭐️ 2\nStick ⚔️ 1 ⭐️ 1"
                 :color       style/green
@@ -59,11 +61,29 @@
       (slash/handle-command @request)
       (spec-helper/should-have-replied @request
         [:<>
-         [:button {:id (str "inventory-button-" (:id @stick)) :class "success"} "Stick"]
-         [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]]
+         [:tr
+          [:button {:id (str "inventory-button-" (:id @stick)) :class "success"} "Stick"]
+          [:button {:id (str "inventory-button-" (:id @propeller-hat)) :class "primary"} "Propeller Hat"]]]
         :embed {:title       "Inventory"
                 :description "Stick ⚔️ 1 ⭐️ 1\nPropeller Hat 👁 2 ⭐️ 2"
                 :color       style/green
-                :author      (user/->author (:member @request))})))
+                :author      (user/->author (:member @request))}))
 
+    (it "partitions items five per row"
+      (-> @bill
+          (user/loot @propeller-hat)
+          (user/loot @stick)
+          (user/loot (db/tx {:kind :product :name "item 1"}))
+          (user/loot (db/tx {:kind :product :name "item 2"}))
+          (user/loot (db/tx {:kind :product :name "item 3"}))
+          (user/loot (db/tx {:kind :product :name "item 4"}))
+          db/tx)
+      (slash/handle-command @request)
+      (let [[_ content _] (stub/last-invocation-of :discord/reply-interaction!)
+            row-1 (second content)
+            row-2 (nth content 2)]
+        (should= 3 (count content))
+        (should= 6 (count row-1))
+        (should= 2 (count row-2))))
+    )
   )
