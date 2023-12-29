@@ -7,7 +7,7 @@
 (defmacro should-have-command
   ([commands name description] `(should-have-command ~commands ~name ~description nil))
   ([commands name description options]
-   `(let [command# (ccc/ffilter #(= ~name (:name %)) ~commands)]
+   `(let [command# (ccc/ffind-by ~commands :name ~name)]
       (should= ~description (:description command#))
       (should= ~options (:options command#))
       (should= 1 (:type command#)))))
