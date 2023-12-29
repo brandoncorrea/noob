@@ -27,6 +27,10 @@
   (let [class (if (core/some= id loadout) "success" "primary")]
     [:button {:id (str "inventory-button-" id) :class class} name]))
 
+;; TODO [BAC]: We can only display up to 25 items. (5 rows with 5 buttons)
+;;   This needs to be addressed at some point.
+;;   - Paging, inventory limit, etc.
+
 (defn render-inventory [inventory loadout]
   (->> (map #(render-item loadout %) inventory)
        (partition-all 5)
