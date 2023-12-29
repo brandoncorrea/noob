@@ -13,5 +13,5 @@
 
 (def give
   {:name        "give"
-   :description "Give some niblets to that special someone"
+   :description "Give a handout to your fellow noob."
    :schema      schema})

@@ -13,6 +13,8 @@
 (defn- remove-commands-from [coll-1 coll-2]
   (remove #(some (partial commands= %) coll-1) coll-2))
 
+;; TODO [BAC]: This could be better.
+;;   Rather than recreating commands, PATCH many commands at once with its new options.
 (defn- sync-commands! [commands get-commands delete-command! create-command!]
   (let [existing (map #(select-keys % [:id :name :type :description :options]) (get-commands))]
     (->> (remove-commands-from commands existing)

@@ -12,6 +12,7 @@
             [noob.slash.action.shop-menu]
             [noob.slash.command.attack]
             [noob.slash.command.give]
+            [noob.slash.command.help]
             [noob.slash.command.inventory]
             [noob.slash.command.love]
             [noob.slash.command.recurrent]

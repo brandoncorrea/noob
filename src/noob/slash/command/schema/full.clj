@@ -8,17 +8,17 @@
 
 (def daily {:name "daily" :description "Redeem your daily Niblets!"})
 (def inventory {:name "inventory" :description "See your inventory!"})
-(def shop {:name "shop" :description "Get in, loser. We're going shopping!"})
+(def shop {:name "shop" :description "The worst of gear for the noobiest of noobs."})
 (def stats {:name "stats" :description "View your player stats."})
 (def weekly {:name "weekly" :description "Redeem your weekly Niblets!"})
-
-;; TODO [BAC]: Implement commands: help, inventory
+(def help {:name "help" :description "How to noob."})
 
 (def legend
   {
    :attack    attack/attack
    :daily     daily
    :give      give/give
+   :help      help
    :inventory inventory
    :love      love/love
    :shop      shop
