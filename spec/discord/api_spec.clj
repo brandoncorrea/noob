@@ -9,6 +9,7 @@
   (with-stubs)
   (redefs-around [http/post     (stub :post)
                   http/get      (stub :get)
+                  http/put      (stub :put)
                   http/delete   (stub :delete)
                   config/app-id "app-id"
                   config/token  "bot-token"])
@@ -74,7 +75,21 @@
 
     (it "success"
       (with-redefs [http/get (constantly {:status 200 :body [:foo :bar]})]
-        (should= [:foo :bar] (sut/get-guild-commands 123)))))
+        (should= [:foo :bar] (sut/get-guild-commands 123))))
+    )
+
+  (it "guilds"
+    (with-redefs [http/get (stub :get {:return {:status 200 :body [:foo]}})]
+      (should= [:foo] (sut/guilds))
+      (should-have-invoked :get {:with ["https://discord.com/api/v10/users/@me/guilds" {:as :json :headers {"Authorization" "Bot bot-token"}}]})))
+
+  (it "overwrite guild commands"
+    (sut/overwrite-guild-commands "foo-id" [:command-1 :command-2])
+    (let [url     "https://discord.com/api/v10/applications/app-id/guilds/foo-id/commands"
+          options {:form-params  [:command-1 :command-2]
+                   :content-type :json
+                   :headers      {"Authorization" "Bot bot-token"}}]
+      (should-have-invoked :put {:with [url options]})))
 
   (context "get-global-commands"
 

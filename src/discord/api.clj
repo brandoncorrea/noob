@@ -31,6 +31,7 @@
   (http-fn (str root uri) (authorize {:form-params body :content-type :json})))
 
 (defn post! [uri body] (http-json http/post uri body))
+(defn put! [uri body] (http-json http/put uri body))
 (defn patch! [uri body] (http-json http/patch uri body))
 (defn get! [uri] (http/get (str root uri) (authorize {:as :json})))
 (defn delete! [uri] (http/delete (str root uri) (authorize nil)))
@@ -62,8 +63,13 @@
       (:body res)
       [])))
 
+(defn guilds [] (get-body-or-empty "/users/@me/guilds"))
+
 (defn get-guild-commands [guild-id]
   (get-body-or-empty (str "/applications/" config/app-id "/guilds/" guild-id "/commands")))
+
+(defn overwrite-guild-commands [guild-id commands]
+  (put! (str "/applications/" config/app-id "/guilds/" guild-id "/commands") commands))
 
 (defn get-global-commands []
   (get-body-or-empty (str "/applications/" config/app-id "/commands")))
