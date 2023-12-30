@@ -10,5 +10,5 @@
 
 (def love
   {:name        "love"
-   :description "Love another player ❤️"
+   :description "Love another player ❤"
    :schema      schema})
