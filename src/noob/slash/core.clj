@@ -29,6 +29,7 @@
 ;; TODO [BAC]: Simplify the interface between here and handle-name & handle-custom-id
 
 (defmethod events/handle-event :interaction-create [_ request]
+  (log/info "Interaction Create:" request)
   (let [options (normalize-options request)]
     (handle-command options)
     (handle-action options)))
