@@ -2,26 +2,26 @@
  :paths     ["src" "resources"]
  :mvn/repos {"my.datomic.com" {:url "https://my.datomic.com/repo"}}
  :deps      {
-             cheshire/cheshire                 {:mvn/version "5.11.0"}
+             cheshire/cheshire                 {:mvn/version "5.13.0"}
              clj-http/clj-http                 {:mvn/version "3.12.3"}
-             ;com.amazonaws/aws-java-sdk-dynamodb {:mvn/version "1.12.543"} ; required for staging/production
-             ;com.amazonaws/aws-java-sdk-s3       {:mvn/version "1.12.543"}
-             com.cleancoders.c3kit/bucket      {:git/url "git@github.com:cleancoders/c3kit-bucket.git" :git/sha "086ec7dd2aab36383a2148fe1bdb0df8795eafc5"}
-             com.datomic/peer                  {:mvn/version "1.0.7021"}
-             com.github.seancorfield/next.jdbc {:mvn/version "1.2.761"}
-             com.mchange/c3p0                  {:mvn/version "0.9.5.5"}
-             dev.weavejester/medley            {:mvn/version "1.7.0"}
-             org.clojure/clojure               {:mvn/version "1.11.1"}
+             com.cleancoders.c3kit/bucket      {:mvn/version "2.1.2"}
+             com.datomic/peer                  {:mvn/version "1.0.7075"}
+             com.github.seancorfield/next.jdbc {:mvn/version "1.3.939"}
+             com.mchange/c3p0                  {:mvn/version "0.10.1"}
+             dev.weavejester/medley            {:mvn/version "1.8.0"}
+             org.clojure/clojure               {:mvn/version "1.11.3"}
              org.suskalo/discljord             {:mvn/version "1.3.0"}
-             org.xerial/sqlite-jdbc            {:mvn/version "3.43.2.2"}
+             org.xerial/sqlite-jdbc            {:mvn/version "3.45.3.0"}
              }
  :aliases   {
-             :test    {:extra-deps  {speclj/speclj {:mvn/version "3.4.3"}}
+             :test    {:extra-deps  {speclj/speclj {:mvn/version "3.4.6"}}
                        :extra-paths ["dev" "spec"]}
              :migrate {:main-opts ["-m" "c3kit.bucket.migration"]}
              :repl    {:main-opts ["-e" "(require,'noob.repl)" "-e" "(in-ns,'noob.repl)" "--repl"] :extra-paths ["dev"]}
              :run     {:main-opts ["-m" "noob.main"]}
              :server  {:jvm-opts ["-Xmx1g" "-server"] :main-opts ["-m" "noob.main"]}
              :spec    {:main-opts ["-m" "speclj.main" "-c"]}
+             :antq    {:deps      {com.github.liquidz/antq {:mvn/version "2.8.1201"}}
+                       :main-opts ["-m" "antq.core"]}
              }
  }
